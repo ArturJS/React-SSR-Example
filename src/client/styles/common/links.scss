@@ -1,0 +1,14 @@
+@import "../references/references";
+
+$c-link: $c-azure;
+$c-unstyled-link: $c-white;
+
+.link {
+	color: $c-link;
+	text-decoration: underline;
+}
+
+.unstyled-link {
+	color: $c-unstyled-link;
+	text-decoration: none;
+}

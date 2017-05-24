@@ -1,0 +1,47 @@
+@import "../../../../styles/references/references";
+
+.resend-confirm-link-modal {
+	$c-modal-title-text: $c-white;
+
+	margin: 0 auto;
+	text-align: center;
+
+	@media (min-width: $tablet-width) {
+		max-width: 600px;
+	}
+
+	@media (max-width: $tablet-width - 1px) {
+		width: 100%;
+	}
+
+	.modal-title {
+		color: $c-modal-title-text;
+	}
+
+	.modal-custom-body {
+		padding: 10px 15px;
+	}
+
+	.items-list {
+		list-style-type: none;
+
+		li:before {
+			content: '\2014'; // dash symbol
+			position: relative;
+			left: -10px;
+		}
+	}
+
+	.buttons-group {
+		display: flex;
+		padding: 10px 0;
+
+		.btn {
+			margin: 0 auto;
+
+			@include mobile {
+				width: 100%;
+			}
+		}
+	}
+}

@@ -1,0 +1,119 @@
+@import "../references/_references";
+
+$c-input-color: $c-black;
+$c-input-bg: $c-desert-storm;
+$c-input-border: $c-silver;
+$c-input-bg-disabled: $c-silver;
+$c-input-border-focus: $c-slightly-darker;
+$c-input-box-shadow-inset-focus: rgba($c-black, .075);
+$c-input-box-shadow-focus: rgba($c-blue, .6);
+$c-input-moz-focus-color: transparent;
+$c-input-moz-focus-shadow: $c-black;
+$input-height: 30px;
+$border-size: 1px;
+
+select:-moz-focusring {
+	color: $c-input-moz-focus-color;
+	text-shadow: 0 0 0 $c-input-moz-focus-shadow;
+}
+
+.form-control,
+.geosuggest__input { // todo fix change location of geosuggest__input
+	display: block;
+	width: 100%;
+	padding: 6px 12px;
+	font-size: 14px;
+	color: $c-input-color;
+	background-color: $c-input-bg;
+	background-image: none;
+	border: $border-size solid $c-input-border;
+	border-radius: 3px;
+	font-family: 'Gotham';
+	-webkit-appearance: none;
+	height: $input-height;
+
+	&:focus {
+		border-color: $c-input-border-focus;
+		outline: 0;
+	}
+
+	&::-ms-expand {
+		border: 0;
+		background-color: transparent;
+	}
+
+	&[disabled],
+	&[readonly] {
+		background-color: $c-input-bg-disabled;
+		opacity: 1; // iOS fix for unreadable disabled content; see https://github.com/twbs/bootstrap/issues/11655npm install google-libphonenumber --save
+	}
+
+	&[disabled] {
+		cursor: $cursor-disabled;
+	}
+}
+
+.select-control {
+	display: flex;
+	align-items: center;
+	.select-item {
+		margin-right: 5px;
+	}
+}
+
+.form-control:disabled {
+	$c-input-color: $c-desert-storm;
+	color: $c-input-color;
+}
+
+textarea.form-control {
+	height: auto;
+}
+
+.prefix-input-item {
+	position: relative;
+	font-size: 14px;
+	text-align: left;
+}
+
+.prefix-input-label {
+	position: absolute;
+	padding-left: 7px;
+	top: 0;
+	bottom: 0;
+	display: inline-flex;
+	align-items: center;
+	color: $c-input-color;
+	line-height: $input-height - 2*$border-size;
+}
+
+.prefix-input-field {
+	padding: 0 12px 0 40px;
+	line-height: $input-height - 2*$border-size;
+}
+
+.prefix-phone-input-field {
+	padding: 0 12px 0 50px;
+	line-height: $input-height - 2*$border-size;
+}
+
+.regular-phone-field {
+	.prefix-phone-input-field {
+		padding-left: 42px;
+	}
+}
+
+select.form-control {
+	appearance: none;
+	background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjMycHgiIGhlaWdodD0iMzJweCIgdmlld0JveD0iMCAwIDQwMS45OTggNDAxLjk5OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDAxLjk5OCA0MDEuOTk4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPGc+CgkJPHBhdGggZD0iTTczLjA5MiwxNjQuNDUyaDI1NS44MTNjNC45NDksMCw5LjIzMy0xLjgwNywxMi44NDgtNS40MjRjMy42MTMtMy42MTYsNS40MjctNy44OTgsNS40MjctMTIuODQ3ICAgIGMwLTQuOTQ5LTEuODEzLTkuMjI5LTUuNDI3LTEyLjg1TDIxMy44NDYsNS40MjRDMjEwLjIzMiwxLjgxMiwyMDUuOTUxLDAsMjAwLjk5OSwwcy05LjIzMywxLjgxMi0xMi44NSw1LjQyNEw2MC4yNDIsMTMzLjMzMSAgICBjLTMuNjE3LDMuNjE3LTUuNDI0LDcuOTAxLTUuNDI0LDEyLjg1YzAsNC45NDgsMS44MDcsOS4yMzEsNS40MjQsMTIuODQ3QzYzLjg2MywxNjIuNjQ1LDY4LjE0NCwxNjQuNDUyLDczLjA5MiwxNjQuNDUyeiIgZmlsbD0iIzkwOTA5MCIvPgoJCTxwYXRoIGQ9Ik0zMjguOTA1LDIzNy41NDlINzMuMDkyYy00Ljk1MiwwLTkuMjMzLDEuODA4LTEyLjg1LDUuNDIxYy0zLjYxNywzLjYxNy01LjQyNCw3Ljg5OC01LjQyNCwxMi44NDcgICAgYzAsNC45NDksMS44MDcsOS4yMzMsNS40MjQsMTIuODQ4TDE4OC4xNDksMzk2LjU3YzMuNjIxLDMuNjE3LDcuOTAyLDUuNDI4LDEyLjg1LDUuNDI4czkuMjMzLTEuODExLDEyLjg0Ny01LjQyOGwxMjcuOTA3LTEyNy45MDYgICAgYzMuNjEzLTMuNjE0LDUuNDI3LTcuODk4LDUuNDI3LTEyLjg0OGMwLTQuOTQ4LTEuODEzLTkuMjI5LTUuNDI3LTEyLjg0N0MzMzguMTM5LDIzOS4zNTMsMzMzLjg1NCwyMzcuNTQ5LDMyOC45MDUsMjM3LjU0OXoiIGZpbGw9IiM5MDkwOTAiLz4KCTwvZz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
+	background-repeat: no-repeat;
+	background-position: 98% 0.7em;
+	padding-right: 1.5em;
+	background-size: auto 30%;
+	padding-top: 0;
+	padding-bottom: 0;
+
+	&::-ms-expand {
+		display: none;
+	}
+}

@@ -1,0 +1,51 @@
+@import "../../../styles/references/references";
+
+.create-account-page {
+	display: flex;
+	width: 100%;
+	justify-content: space-around;
+	padding-bottom: 30px;
+	$c-bar-bg: $c-green;
+	$c-title-color: $c-black;
+	$c-subtitle-color: $c-gray;
+
+	.page-title {
+		margin-bottom: 0;
+		color: $c-title-color;
+	}
+
+	.page-subtitle {
+		font-weight: 300;
+		margin-top: 0;
+		font-size: 20px;
+		color: $c-subtitle-color;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.create-account-form {
+		display: flex;
+		flex-direction: column;
+		max-width: 500px;
+		width: 100%;
+	}
+
+	.form-group {
+		max-height: none;
+	}
+
+	.btn-continue {
+		margin: 15px;
+		flex-grow: 1;
+	}
+
+	.agreements-info {
+		text-align: center;
+		margin-top: 15px;
+	}
+}

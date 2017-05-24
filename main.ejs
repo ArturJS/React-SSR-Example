@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+	<title>NI Onboarding</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+	<%= "\<\% if (typeof files !== 'undefined') { \%\>" %>
+	<%= "\<\% files.forEach(function (file) { \%\>" %>
+	<%= '<link rel="preload" href="/\<\%- file \%\>" as="script"\>' %>
+	<%= "\<\% }); \%\>" %>
+	<%= "\<\% } \%\>" %>
+	<script src="https://www.google.com/recaptcha/api.js"></script>
+	<script type="text/javascript"
+			src="https://maps.googleapis.com/maps/api/js?libraries=places&language=en&key=AIzaSyCi4N5xXjJQ8-2aWQkQRHa8IsReeJHj6IA"></script>
+</head>
+<body>
+<div id="main">
+	<%= "\<\% if (typeof html !== 'undefined') { \%\>\<\%- html \%\>\<\% } \%\>" %>
+</div>
+<script>
+	window.__INITIAL_STATE__ = <%= "\<\%  if (typeof state !== 'undefined' && state) { \%\>\<\%- JSON.stringify(state) \%\>\<\% } else { \%\>null\<\% } \%\>" %>;
+	window.__INITIAL_MODULES__ = <%= "\<\%  if (typeof modules !== 'undefined' && modules) { \%\>\<\%- JSON.stringify(modules) \%\>\<\% } else { \%\>null\<\% } \%\>" %>;
+</script>
+</body>
+</html>
+

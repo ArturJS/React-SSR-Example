@@ -1,0 +1,58 @@
+@import '../../../styles/references/_references';
+
+.header {
+	$c-header-bg: $c-desert-storm;
+	$c-header-border: $c-quill-gray;
+
+	margin-bottom: 20px;
+	border-bottom: 3px solid $c-header-border;
+	display: block;
+
+	.navbar-header {
+		display: flex;
+		width: 80%;
+		margin: 0 auto;
+		padding-left: 15px;
+	}
+
+	.container {
+		padding: 0 15px;
+	}
+
+	.navbar-brand {
+		padding: 20px 0 0;
+		height: $header-height;
+		display: inline-block;
+	}
+
+	&.navbar-fixed-top {
+		position: fixed;
+		top: 0;
+		right: 0;
+		left: 0;
+		z-index: 1030;
+	}
+	&.navbar {
+		height: $header-height;
+		min-width: $min-mobile-width;
+	}
+	&.navbar-default {
+		background-color: $c-header-bg;
+	}
+	.navbar-left {
+		display: inline-block;
+	}
+}
+
+.logo {
+	padding-top: 15px;
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 192px;
+	background-image: url(/images/logo.png);
+
+	.logo-sizer {
+		padding-top: 15.5%;
+		height: 0;
+	}
+}

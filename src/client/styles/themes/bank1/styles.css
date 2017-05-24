@@ -1,0 +1,126 @@
+body,
+button,
+input,
+optgroup,
+select,
+textarea {
+	font-family: sans-serif, Arial;
+}
+
+html {
+	background-color: #FFFFFF;
+}
+
+/* Common and base styles */
+
+.header.navbar-default {
+	position: relative;
+	background-color: #06357a;
+}
+
+.header.navbar-default:before {
+	content: '';
+	position: absolute;
+	top: calc(50% - 15px);
+	left: 0;
+	right: 0;
+	height: 30px;
+	background-color: #fdb813;
+	z-index: -1;
+}
+
+.header .navbar-brand .logo {
+	padding-top: 20px;
+	margin-top: -5px;
+	background-image: url("/themes/bank1/logo.png");
+}
+
+.landing-header .logo {
+	background-image: url("/themes/bank1/logo.png");
+	height: 50px;
+}
+
+.page {
+	padding-top: 0;
+}
+
+.btn {
+	border-radius: 0;
+}
+
+.form-control {
+	border-radius: 0;
+	color: #062d66;
+	font-weight: 600;
+}
+
+/* WizardSteps */
+
+.wizard-steps .wizard-step.active ~ .wizard-step .wizard-step-label,
+.wizard-steps .wizard-step .check-circle-icon:before {
+	color: #062d66;
+}
+
+.wizard-steps .wizard-step.active ~ .wizard-step:before,
+.wizard-steps .wizard-step.active ~ .wizard-step:after,
+.wizard-steps .wizard-step.active:after,
+.wizard-steps .wizard-step.active ~ .wizard-step .check-circle-icon {
+	border-color: #062d66;
+}
+
+.wizard-steps .wizard-step-label {
+	color: #fdb813;
+	font-weight: bold;
+}
+.wizard-steps .wizard-step.active .check-circle-icon {
+	background-color: #fdb813;
+}
+
+.check-circle-icon,
+.check-circle-icon .check-mark {
+	border-color: #fdb813;
+}
+
+.wizard-steps .wizard-step:after,
+.wizard-steps .wizard-step:before {
+	border-color: #fdb813;
+}
+
+
+/* Landing page */
+
+.landing .start-panel {
+	background-color: #062d66;
+}
+
+.landing .btn {
+	border: 1px solid #FFFFFF;
+	background-color: #062d66;
+	color: #fdb813;
+}
+
+.landing .btn:hover {
+	background-color: #0c4292;
+}
+
+.landing .landing-title {
+	color: #062d66;
+}
+
+.landing .sub-title {
+	color: #062d66;
+}
+
+/* Package Type page */
+
+.package-selection-page .hide:checked + .package-item-label {
+	border-color: #fdb813;
+}
+
+.package-selection-page .hide:checked + .package-item-label .text-primary {
+	color: #fdb813;
+}
+
+.package-selection-page .hide:checked + .package-item-label .check-corner {
+	border-bottom-color: #fdb813;
+}

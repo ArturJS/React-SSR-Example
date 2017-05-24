@@ -1,0 +1,35 @@
+@import "../references/references";
+
+.page-title {
+	text-align: center;
+	font-weight: 300;
+	font-size: 40px;
+}
+
+.page-subtitle {
+	text-align: center;
+}
+
+.shell-footer {
+	$c-shell-footer-bg: $c-desert-storm;
+	$c-shell-footer-border: $c-quill-gray;
+
+	width: 100%;
+	background-color: $c-shell-footer-bg;
+	border-top: 1px solid $c-shell-footer-border;
+	display: flex;
+	justify-content: center;
+	flex-direction: column-reverse;
+	align-items: center;
+	margin-top: 20px;
+	padding: 0 15px;
+
+	@media (min-width: $tablet-width) {
+		flex-direction: row;
+		height: 100px;
+	}
+
+	.btn {
+		width: 200px;
+	}
+}

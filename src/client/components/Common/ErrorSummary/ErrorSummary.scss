@@ -1,0 +1,30 @@
+@import "../../../styles/references/references";
+
+$c-error-summary-color: $c-burnt-sienna;
+
+.error-summary {
+	color: $c-error-summary-color;
+	font-size: 21px;
+	animation: error-summary-zoom 0.3s;
+	margin-top: 15px;
+	margin-left: 15px;
+
+	&:empty {
+		display: none;
+	}
+
+	.error-item {
+		margin: 0 0 15px;
+		text-align: center;
+	}
+}
+
+@keyframes error-summary-zoom {
+	from {
+		transform: scale(0);
+	}
+
+	to {
+		transform: scale(1);
+	}
+}

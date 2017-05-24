@@ -1,0 +1,52 @@
+@import '../../../../styles/references/_references';
+
+.new-merchant-modal {
+	margin: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	.form {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		@media (min-width: $tablet-width) {
+			width: 50%;
+		}
+	}
+
+	@media (min-width: $tablet-width) {
+		.form-group {
+			width: 383px;
+			flex-wrap: nowrap;
+		}
+		.control-label {
+			width: 40%;
+			min-width: 40%;
+			text-align: right;
+		}
+		.long-form-group {
+			width: $tablet-width;
+			.control-label {
+				width: 20%;
+			}
+		}
+	}
+
+	.product-item {
+		display: flex;
+		align-items: center;
+		
+		.product-item-checker {
+			margin-right: 5px;
+		}
+	}
+
+	.status-field {
+		text-align: left;
+		padding-top: 5px;
+
+	}
+
+	.btn {
+		margin: 0 auto;
+	}
+}

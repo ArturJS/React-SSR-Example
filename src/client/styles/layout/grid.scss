@@ -1,0 +1,18 @@
+@import "./../references/references";
+
+.container {
+	width: 100%;
+	margin: 0 auto;
+	min-width: $min-mobile-width;
+	@include tablet {
+		width: $tablet-width;
+	}
+
+	@include desktop {
+		width: $desktop-width;
+	}
+
+	@include hi-res {
+		width: $hi-res-width;
+	}
+}

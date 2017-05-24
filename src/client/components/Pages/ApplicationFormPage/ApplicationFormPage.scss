@@ -1,0 +1,274 @@
+@import "../../../styles/references/references";
+
+.application-form-page {
+	$c-text-blurred: $c-gray;
+	$c-text-primary-color: $c-primary-blue;
+
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+	margin: 0 15px;
+	width: 100%;
+	position: relative;
+	padding-bottom: 20px;
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		flex-grow: 1;
+
+		@media (min-width: $desktop-width) {
+			width: 70%;
+			margin: 0 auto;
+		}
+	}
+
+	.header-block {
+		display: flex;
+		width: 100%;
+		padding: 15px;
+		font-size: 21px;
+
+		@media (max-width: $hi-res-width - 1px) {
+			flex-direction: column;
+		}
+	}
+
+	.application-status {
+		@media (min-width: $hi-res-width) {
+			margin-left: auto;
+		}
+	}
+
+	.welcome-block,
+	.application-status {
+		@media (max-width: $hi-res-width - 1px) {
+			text-align: center;
+			margin-bottom: 15px;
+		}
+	}
+
+	.application-form {
+		width: 100%;
+	}
+
+	.no-underline {
+		border-bottom: 0 !important;
+	}
+
+	.no-margin-top {
+		margin-top: 0 !important;
+	}
+
+	.no-padding-bottom {
+		padding-bottom: 0 !important;
+	}
+
+	.person-info-title {
+		margin: 0;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		font-weight: 400;
+		padding: 15px 0 0;
+
+		&-info {
+			font-weight: 400;
+		}
+
+		@include mobile {
+			flex-wrap: wrap;
+			flex-direction: column;
+			padding-left: 15px;
+
+			.person-info-title-info,
+			.second-business-owner-field {
+				width: 100%;
+				margin-bottom: 15px;
+			}
+		}
+
+		&-info {
+			flex-grow: 1;
+			margin: 0;
+		}
+	}
+
+	.document-icon {
+		width: 70px;
+		height: 70px;
+		display: block;
+		margin: 0 auto 5px;
+	}
+
+	.document-icon-upload {
+		background-image: url('/icons/upload.svg');
+	}
+	.document-icon-success {
+		background-image: url('/icons/success.svg');
+	}
+	.document-icon-error {
+		background-image: url('/icons/error.svg');
+	}
+
+	.second-person-info-title {
+		@media (min-width: $tablet-width) {
+			flex-direction: row-reverse;
+		}
+	}
+
+	.second-business-owner-field {
+		margin-left: auto; // float right with flex
+	}
+
+	.optional-remark {
+		color: $c-text-blurred;
+		font-weight: normal;
+	}
+
+	.add-another-business-owner {
+
+		.checkbox-input {
+			display: none;
+
+			& ~ .description {
+				cursor: pointer;
+				user-select: none;
+				color: $c-text-primary-color;
+
+				.description-add {
+					display: inline-block;
+				}
+
+				.description-remove {
+					display: none;
+				}
+			}
+
+			&:checked {
+				& ~ .description {
+					.description-add {
+						display: none;
+					}
+
+					.description-remove {
+						display: inline-block;
+					}
+				}
+			}
+		}
+	}
+
+	.person-info-block {
+		@media (min-width: $tablet-width) {
+			height: 265px
+		}
+	}
+
+	.form-block {
+		margin: 0;
+		border-bottom: none;
+		padding: 20px 0;
+		@media (min-width: $tablet-width) {
+			height: 285px;
+		}
+	}
+
+	.business-details-block {
+		flex-direction: row;
+
+		@media (min-width: $tablet-width) {
+			height: 750px;
+		}
+	}
+
+	.merchant-name-checkbox-field {
+		@media (min-width: $tablet-width) {
+			padding-top: 25px;
+		}
+
+		.checkbox-cnt {
+			margin-left: 0;
+		}
+	}
+
+	.pos-receiver-block {
+		height: auto;
+	}
+
+	.person-info-group {
+		border-bottom: 1px solid $c-form-block-border;
+	}
+
+	.person-pos-block {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.btn-link {
+		outline: none;
+	}
+
+	.btn-remove {
+		font-size: 1em;
+		margin-left: 15px;
+	}
+
+	.ownership-block {
+		width: 100%;
+	}
+
+	.add-business-owner-row {
+		display: flex;
+
+		.btn {
+			margin-left: auto;
+			margin-right: 15px;
+
+			@include mobile {
+				margin: 0 auto;
+			}
+		}
+	}
+
+	.block-title {
+		text-align: center;
+		font-size: 26px;
+		font-weight: normal;
+	}
+
+	.business-details-cnt,
+	.documents-block {
+		width: 100%; // necessary to fix wrong width with flex-grow in IE11
+	}
+
+	.business-details-cnt,
+	.ownership-block {
+		border-bottom: 2px solid $c-gray;
+	}
+
+	.save-changes-row {
+		display: flex;
+	}
+
+	.btn-submit {
+		margin: 15px auto;
+
+		@include mobile {
+			width: 100%;
+		}
+	}
+
+	.geo-suggest-group {
+		width: 100%;
+
+		.geosuggest {
+			width: 100%;
+			margin: 0;
+		}
+
+		.geosuggest__input {
+			width: 100%;
+		}
+	}
+}

@@ -1,0 +1,43 @@
+@import "../../../../styles/references/references";
+
+.login-modal {
+	margin: 10px;
+
+	@media (min-width: $tablet-width) {
+		width: 350px;
+	}
+
+	.control-label {
+		margin-bottom: 0;
+	}
+
+	.modal-button {
+		margin: 10px 0;
+	}
+
+	.modal-footer {
+		clear: both;
+	}
+
+	.link {
+		cursor: pointer;
+	}
+
+	.form-link {
+		margin-left: 45px;
+	}
+
+	.sign-section {
+		text-align: center;
+		margin: 0;
+		padding-top: 5px;
+
+		.link {
+			margin-left: 15px;
+		}
+	}
+
+	.error-summary {
+		margin-top: 0;
+	}
+}

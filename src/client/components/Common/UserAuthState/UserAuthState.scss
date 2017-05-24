@@ -1,0 +1,19 @@
+.user-auth-state {
+	align-self: center;
+	margin-left: auto; // float right for flex items
+
+	.email {
+		margin-right: 15px;
+	}
+
+	.logged {
+		&-in, &-out {
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.btn {
+		outline: none;
+	}
+}

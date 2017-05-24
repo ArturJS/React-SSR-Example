@@ -1,0 +1,116 @@
+@import "../references/references";
+
+.btn {
+	$c-btn-text: $c-biscay;
+	$c-btn-primary-text: $c-white;
+
+	$c-btn-border: $c-biscay;
+	$c-btn-bg: $c-biscay;
+	$c-btn-bg-focus: rgba($c-biscay, 0.8);
+
+	$c-btn-hover-bg: $c-lynch;
+	$c-btn-hover-border: $c-lynch;
+	$c-btn-hover-text: $c-lynch;
+
+	$c-btn-active-bg: $c-bunting;
+	$c-btn-active-border: $c-bunting;
+	$c-btn-active-text: $c-bunting;
+
+	$c-btn-disabled-bg: $c-geyser;
+	$c-btn-disabled-border: $c-geyser;
+	$c-btn-disabled-text: $c-athens-gray;
+
+	$btn-height-small: 30px;
+	$btn-height: 40px;
+
+	transition: all 0.5s ease-out;
+	outline: 0;
+	border-radius: 4px;
+	touch-action: manipulation;
+	cursor: pointer;
+	user-select: none;
+	background-image: none;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	margin-bottom: 0;
+	border: 1px solid $c-btn-border;
+	background-color: $c-btn-bg;
+	color: $c-btn-text;
+	padding: 6px 12px;
+	font: 14px arial;
+	font-weight: 600;
+	line-height: $btn-height - 14px;
+	height: $btn-height;
+
+	&:focus {
+		outline: 5px auto -webkit-focus-ring-color;
+		outline-offset: -2px;
+		border-color: $c-btn-hover-border;
+		color: $c-btn-hover-text;
+	}
+
+	&:hover {
+		border-color: $c-btn-hover-border;
+		color: $c-btn-hover-text;
+	}
+
+	&:active {
+		border-color: $c-btn-active-border;
+		color: $c-btn-active-text;
+	}
+
+	&:disabled {
+		color: $c-btn-disabled-text;
+		border-color: $c-btn-disabled-border;
+	}
+
+	&-primary {
+		color: $c-btn-primary-text;
+		background-color: $c-btn-bg;
+
+		&:focus {
+			color: $c-btn-primary-text;
+			background-color: $c-btn-hover-bg;
+		}
+
+		&:hover {
+			color: $c-btn-primary-text;
+			background-color: $c-btn-hover-bg;
+		}
+
+		&:active {
+			color: $c-btn-primary-text;
+			background-color: $c-btn-active-bg;
+		}
+
+		&:disabled {
+			color: $c-btn-primary-text;
+			background-color: $c-btn-disabled-bg;
+		}
+	}
+
+	&-link {
+		position: relative;
+		top: -1px;
+		background: none;
+		border: 0;
+		padding: 0;
+		color: $c-btn-text;
+		text-decoration: underline;
+		font-weight: 400;
+		outline: none !important;
+		height: 1em;
+		line-height: 1em;
+	}
+
+	&-default {
+		background-color: transparent;
+		color: $c-btn-border;
+	}
+
+	&-sm {
+		line-height: $btn-height-small - 14px;
+		height: $btn-height-small;
+	}
+}

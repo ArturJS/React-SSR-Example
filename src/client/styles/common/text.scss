@@ -1,0 +1,27 @@
+@import "./../references/references";
+
+$c-text-muted-color: $c-boulder;
+
+.text-muted {
+	color: $c-text-muted-color;
+}
+
+.text-underline {
+	text-decoration: underline;
+}
+
+.text-primary {
+	color: $c-text-primary-color;
+}
+
+.font-normal {
+	font-weight: normal;
+}
+
+.danger {
+	color: $c-danger;
+}
+
+.success {
+	color: $c-success;
+}

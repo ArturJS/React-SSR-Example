@@ -1,16 +1,17 @@
 var rimraf = require('rimraf');
-console.log('old build removed');
 
+console.log('removing old build...');
 rimraf.sync('./build');
+console.log('old build removed');
 
 process.env.NODE_ENV = 'development';
 
 var webpack = require('webpack');
 var chalk = require('chalk');
-var config = require('../webpack.config.ssr.dev');
+var config = require('../config/webpack.config.ssr.dev.js');
 
 if (process.argv.indexOf('-p') > -1) {
-	config = require('../webpack.config.ssr.prod');
+	config = require('../config/webpack.config.ssr.prod.js');
 	process.env.NODE_ENV = 'production';
 }
 

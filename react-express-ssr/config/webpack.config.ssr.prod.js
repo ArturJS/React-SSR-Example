@@ -9,8 +9,8 @@ var autoprefixer = require('autoprefixer');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-var paths = require('./config/paths');
-var FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+var paths = require('./paths');
+var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 var envtype = '';
 if (process.argv.indexOf('--qa') > -1) {
@@ -30,8 +30,9 @@ var isCapthcaEnable = true;
 if (process.argv.indexOf('--at') > -1) {
 	isCapthcaEnable = false;
 }
+
 const nodeModules = {};
-fs.readdirSync(path.join(__dirname, 'node_modules'))
+fs.readdirSync(path.join(__dirname, '../node_modules'))
 	.filter(x => ['.bin'].indexOf(x) === -1)
 	.forEach(mod => nodeModules[mod] = `commonjs ${mod}`);
 
@@ -40,11 +41,11 @@ extractTextPlugin.options.allChunks = true;
 const config = server => {
 	return ({
 		entry: {
-			app: path.join(__dirname, 'src', (server ? 'app.js' : 'client.js'))
+			app: path.join(__dirname, '../src', (server ? 'app.js' : 'client.js'))
 		},
 
 		output: {
-			path: server ? path.join(__dirname, 'build', 'server') : path.join(__dirname, 'build', 'public'),
+			path: server ? path.join(__dirname, '../build', 'server') : path.join(__dirname, '../build', 'public'),
 			filename: '[name].js',
 			chunkFilename: '[id].[hash].js',
 			publicPath: '/',

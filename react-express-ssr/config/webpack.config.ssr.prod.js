@@ -11,6 +11,8 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 var paths = require('./paths');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+var ProgressBarPlugin = require('progress-bar-webpack-plugin');
+var chalk = require('chalk');
 
 var envtype = '';
 if (process.argv.indexOf('--qa') > -1) {
@@ -32,6 +34,7 @@ if (process.argv.indexOf('--at') > -1) {
 }
 
 const nodeModules = {};
+
 fs.readdirSync(path.join(__dirname, '../node_modules'))
 	.filter(x => ['.bin'].indexOf(x) === -1)
 	.forEach(mod => nodeModules[mod] = `commonjs ${mod}`);
@@ -148,7 +151,11 @@ const config = server => {
 				{from: 'public', to: ''},
 				{from: paths.themes, to: 'themes'}
 			]),
-			extractTextPlugin
+			extractTextPlugin,
+			new ProgressBarPlugin({
+				format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)',
+				clear: false
+			})
 		]
 	});
 };

@@ -10,6 +10,8 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var paths = require('./paths');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+var ProgressBarPlugin = require('progress-bar-webpack-plugin');
+var chalk = require('chalk');
 
 var envtype = '';
 if (process.argv.indexOf('--qa') > -1) {
@@ -134,7 +136,11 @@ const config = server => {
 				{from: 'public', to: ''},
 				{from: paths.themes, to: 'themes'}
 			]),
-			extractTextPlugin
+			extractTextPlugin,
+			new ProgressBarPlugin({
+				format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)',
+				clear: false
+			})
 		]
 	});
 };

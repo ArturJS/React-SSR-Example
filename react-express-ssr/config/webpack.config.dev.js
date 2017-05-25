@@ -7,7 +7,7 @@ var WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeMod
 var getClientEnvironment = require('./env');
 var paths = require('./paths');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
-var FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 var envtype = '';
 if (process.argv.indexOf('--qa') > -1) {

@@ -15,7 +15,13 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
+        enforce: "pre",
+        loader: 'eslint-loader',
+        include: PATHS.appSrc
+      },
+      {
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
       }

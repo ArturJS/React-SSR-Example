@@ -59,16 +59,14 @@ export default class App extends Component {
 
   render() {
     const {user} = this.props;
-    const styles = require('./App.scss');
 
     return (
-      <div className={styles.app}>
+      <div>
         <Helmet {...config.app.head}/>
         <Navbar fixedTop>
           <Navbar.Header>
             <Navbar.Brand>
               <IndexLink to="/" activeStyle={{color: '#33e0ff'}}>
-                <div className={styles.brand}/>
                 <span>{config.app.title}</span>
               </IndexLink>
             </Navbar.Brand>
@@ -105,8 +103,6 @@ export default class App extends Component {
                 </NavItem>
               </LinkContainer>}
             </Nav>
-            {user &&
-            <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}
             <Nav navbar pullRight>
               <NavItem eventKey={1} target="_blank" title="View on Github" href="https://github.com/erikras/react-redux-universal-hot-example">
                 <i className="fa fa-github"/>
@@ -114,10 +110,6 @@ export default class App extends Component {
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-
-        <div className={styles.appContent}>
-          {this.props.children}
-        </div>
         <InfoBar/>
 
         <div className="well text-center">

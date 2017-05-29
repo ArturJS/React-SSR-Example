@@ -46,20 +46,20 @@ class SurveyForm extends Component {
       resetForm,
       pristine,
       valid
-      } = this.props;
-    const styles = require('./SurveyForm.scss');
+    } = this.props;
+
     const renderInput = (field, label, showAsyncValidating) =>
       <div className={'form-group' + (field.error && field.touched ? ' has-error' : '')}>
         <label htmlFor={field.name} className="col-sm-2">{label}</label>
-        <div className={'col-sm-8 ' + styles.inputGroup}>
-          {showAsyncValidating && asyncValidating && <i className={'fa fa-cog fa-spin ' + styles.cog}/>}
+        <div className={'col-sm-8 '}>
+          {showAsyncValidating && asyncValidating && <i className={'fa fa-cog fa-spin '}/>}
           <input type="text" className="form-control" id={field.name} {...field}/>
           {field.error && field.touched && <div className="text-danger">{field.error}</div>}
-          <div className={styles.flags}>
-            {field.dirty && <span className={styles.dirty} title="Dirty">D</span>}
-            {field.active && <span className={styles.active} title="Active">A</span>}
-            {field.visited && <span className={styles.visited} title="Visited">V</span>}
-            {field.touched && <span className={styles.touched} title="Touched">T</span>}
+          <div >
+            {field.dirty && <span title="Dirty">D</span>}
+            {field.active && <span title="Active">A</span>}
+            {field.visited && <span title="Visited">V</span>}
+            {field.touched && <span title="Touched">T</span>}
           </div>
         </div>
       </div>;
@@ -80,9 +80,9 @@ class SurveyForm extends Component {
             <label className="col-sm-2">Sex</label>
             <div className="col-sm-8">
               <input type="radio" id="sex-male" {...sex} value="male" checked={sex.value === 'male'}/>
-              <label htmlFor="sex-male" className={styles.radioLabel}>Male</label>
+              <label htmlFor="sex-male">Male</label>
               <input type="radio" id="sex-female" {...sex} value="female" checked={sex.value === 'female'}/>
-              <label htmlFor="sex-female" className={styles.radioLabel}>Female</label>
+              <label htmlFor="sex-female">Female</label>
             </div>
           </div>
           <div className="form-group">

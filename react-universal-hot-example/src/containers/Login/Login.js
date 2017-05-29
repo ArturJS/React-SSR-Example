@@ -18,13 +18,12 @@ export default class Login extends Component {
     const input = this.refs.username;
     this.props.login(input.value);
     input.value = '';
-  }
+  };
 
   render() {
     const {user, logout} = this.props;
-    const styles = require('./Login.scss');
     return (
-      <div className={styles.loginPage + ' container'}>
+      <div className={' container'}>
         <Helmet title="Login"/>
         <h1>Login</h1>
         {!user &&

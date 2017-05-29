@@ -31,27 +31,28 @@ export default class WidgetForm extends Component {
   };
 
   render() {
-    const { editStop, fields: {id, color, sprocketCount, owner}, formKey, handleSubmit, invalid,
-      pristine, save, submitting, saveError: { [formKey]: saveError }, values } = this.props;
-    const styles = require('containers/Widgets/Widgets.scss');
+    const {
+      editStop, fields: {id, color, sprocketCount, owner}, formKey, handleSubmit, invalid,
+      pristine, save, submitting, saveError: {[formKey]: saveError}, values
+    } = this.props;
     return (
-      <tr className={submitting ? styles.saving : ''}>
-        <td className={styles.idCol}>{id.value}</td>
-        <td className={styles.colorCol}>
+      <tr>
+        <td >{id.value}</td>
+        <td >
           <select name="color" className="form-control" {...color}>
             {colors.map(valueColor => <option value={valueColor} key={valueColor}>{valueColor}</option>)}
           </select>
           {color.error && color.touched && <div className="text-danger">{color.error}</div>}
         </td>
-        <td className={styles.sprocketsCol}>
+        <td >
           <input type="text" className="form-control" {...sprocketCount}/>
           {sprocketCount.error && sprocketCount.touched && <div className="text-danger">{sprocketCount.error}</div>}
         </td>
-        <td className={styles.ownerCol}>
+        <td >
           <input type="text" className="form-control" {...owner}/>
           {owner.error && owner.touched && <div className="text-danger">{owner.error}</div>}
         </td>
-        <td className={styles.buttonCol}>
+        <td >
           <button className="btn btn-default"
                   onClick={() => editStop(formKey)}
                   disabled={submitting}>

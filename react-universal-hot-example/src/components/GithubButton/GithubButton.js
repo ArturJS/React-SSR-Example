@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const GithubButton = (props) => {
   const {user, repo, type, width, height, count, large} = props;
@@ -19,13 +20,13 @@ const GithubButton = (props) => {
 };
 
 GithubButton.propTypes = {
-  user: React.PropTypes.string.isRequired,
-  repo: React.PropTypes.string.isRequired,
-  type: React.PropTypes.oneOf(['star', 'watch', 'fork', 'follow']).isRequired,
-  width: React.PropTypes.number.isRequired,
-  height: React.PropTypes.number.isRequired,
-  count: React.PropTypes.bool,
-  large: React.PropTypes.bool
+  user: PropTypes.string.isRequired,
+  repo: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['star', 'watch', 'fork', 'follow']).isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  count: PropTypes.bool,
+  large: PropTypes.bool
 };
 
 export default GithubButton;

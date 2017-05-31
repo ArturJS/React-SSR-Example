@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 import * as authActions from 'redux/modules/auth';
@@ -11,7 +12,7 @@ export default class Login extends Component {
     user: PropTypes.object,
     login: PropTypes.func,
     logout: PropTypes.func
-  }
+  };
 
   handleSubmit = (event) => {
     event.preventDefault();

@@ -1,11 +1,13 @@
 import Express from 'express';
 import React from 'react';
-import ReactDOM from 'react-dom/server';
 import config from './config';
 import favicon from 'serve-favicon';
 import compression from 'compression';
 import httpProxy from 'http-proxy';
 import path from 'path';
+
+import {renderToString} from 'react-router-server';
+import {StaticRouter} from 'react-router';
 
 import Html from './helpers/Html';
 import Home from './containers/Home';
@@ -54,7 +56,6 @@ proxy.on('error', (error, req, res) => {
 });
 
 
-
 app.use((req, res) => {
   if (__DEVELOPMENT__) {
     // Do not cache webpack stats: the script file would change since
@@ -62,9 +63,20 @@ app.use((req, res) => {
     webpackIsomorphicTools.refresh();
   }
 
+  const context = {};
+
   function hydrateOnClient() {
-    res.send('<!doctype html>\n' +
-      ReactDOM.renderToString(<Html assets={webpackIsomorphicTools.assets()}/>));
+    renderToString(
+      <StaticRouter
+        location={req.url}
+        context={context}>
+        <Html assets={webpackIsomorphicTools.assets()}/>
+      </StaticRouter>
+    )
+      .then(({html}) => {
+        res.send('<!doctype html>\n' + html);
+      })
+      .catch(err => console.error(err));
   }
 
   if (__DISABLE_SSR__) {
@@ -76,8 +88,17 @@ app.use((req, res) => {
 
   global.navigator = {userAgent: req.headers['user-agent']};
 
-  res.send('<!doctype html>\n' +
-    ReactDOM.renderToString(<Html assets={webpackIsomorphicTools.assets()} component={<Home/>}/>));
+  renderToString(
+    <StaticRouter
+      location={req.url}
+      context={context}>
+      <Html assets={webpackIsomorphicTools.assets()} component={<Home/>}/>
+    </StaticRouter>
+  )
+    .then(({html}) => {
+      res.send('<!doctype html>\n' + html);
+    })
+    .catch(err => console.error(err));
 
 });
 

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom/server';
-import serialize from 'serialize-javascript';
+// import serialize from 'serialize-javascript'; // todo use for mobx store
 import Helmet from 'react-helmet';
 
 /**
@@ -16,12 +16,11 @@ import Helmet from 'react-helmet';
 export default class Html extends Component {
   static propTypes = {
     assets: PropTypes.object,
-    component: PropTypes.node,
-    store: PropTypes.object
+    component: PropTypes.node
   };
 
   render() {
-    const {assets, component, store} = this.props;
+    const {assets, component} = this.props;
     const content = component ? ReactDOM.renderToString(component) : '';
     const head = Helmet.rewind();
 
@@ -49,7 +48,7 @@ export default class Html extends Component {
         </head>
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: content}}/>
-          <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())};`}} charSet="UTF-8"/>
+          {/* <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())};`}} charSet="UTF-8"/> */}
           <script src={assets.javascript.main} charSet="UTF-8"/>
         </body>
       </html>

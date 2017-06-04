@@ -3,6 +3,17 @@ import config from '../../config';
 import Helmet from 'react-helmet';
 
 export default class Home extends Component {
+
+  state = {
+    count: 17
+  };
+
+  plusOne = () => {
+    this.setState({
+      count: this.state.count + 1
+    });
+  };
+
   render() {
     // require the logo image both from client and server
     const logoImage = require('./logo.png');
@@ -31,6 +42,9 @@ export default class Home extends Component {
               Created and maintained by <a href="https://twitter.com/erikras" target="_blank">@erikras</a>.
             </p>
           </div>
+        </div>
+        <div onClick={this.plusOne}>
+          Count: {this.state.count}
         </div>
 
         <div className="container">

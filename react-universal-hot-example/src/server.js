@@ -10,7 +10,7 @@ import {renderToString} from 'react-router-server';
 import {StaticRouter} from 'react-router';
 
 import Html from './helpers/Html';
-import Home from './containers/Home';
+import Client from './client';
 import http from 'http';
 
 // import getRoutes from './routes';
@@ -67,11 +67,7 @@ app.use((req, res) => {
 
   function hydrateOnClient() {
     renderToString(
-      <StaticRouter
-        location={req.url}
-        context={context}>
-        <Html assets={webpackIsomorphicTools.assets()}/>
-      </StaticRouter>
+      <Html assets={webpackIsomorphicTools.assets()}/>
     )
       .then(({html}) => {
         res.send('<!doctype html>\n' + html);
@@ -89,11 +85,13 @@ app.use((req, res) => {
   global.navigator = {userAgent: req.headers['user-agent']};
 
   renderToString(
-    <StaticRouter
-      location={req.url}
-      context={context}>
-      <Html assets={webpackIsomorphicTools.assets()} component={<Home/>}/>
-    </StaticRouter>
+    <Html assets={webpackIsomorphicTools.assets()} component={
+      <StaticRouter
+        location={req.url}
+        context={context}>
+        {Client}
+      </StaticRouter>
+    }/>
   )
     .then(({html}) => {
       res.send('<!doctype html>\n' + html);

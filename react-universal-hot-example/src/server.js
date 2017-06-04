@@ -65,27 +65,9 @@ app.use((req, res) => {
 
   const context = {};
 
-  function hydrateOnClient() {
-    renderToString(
-      <Html assets={webpackIsomorphicTools.assets()}/>
-    )
-      .then(({html}) => {
-        res.send('<!doctype html>\n' + html);
-      })
-      .catch(err => console.error(err));
-  }
-
-  if (__DISABLE_SSR__) {
-    hydrateOnClient();
-    return;
-  }
-
-  res.status(200);
-
-  global.navigator = {userAgent: req.headers['user-agent']};
-
   renderToString(
     <Html assets={webpackIsomorphicTools.assets()} component={
+      __DISABLE_SSR__ ? null :
       <StaticRouter
         location={req.url}
         context={context}>
@@ -94,6 +76,11 @@ app.use((req, res) => {
     }/>
   )
     .then(({html}) => {
+      if (context.url) {
+        _redirectTo(res, context.url);
+        return;
+      }
+
       res.send('<!doctype html>\n' + html);
     })
     .catch(err => console.error(err));
@@ -110,4 +97,14 @@ if (config.port) {
   });
 } else {
   console.error('==>     ERROR: No PORT environment variable has been specified');
+}
+
+// private methods
+
+
+function _redirectTo(res, redirectUrl) {
+  res.writeHead(302, {
+    Location: redirectUrl
+  });
+  res.end();
 }

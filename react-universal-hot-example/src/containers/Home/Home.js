@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import config from '../../config';
 import Helmet from 'react-helmet';
+import './Home.scss';
 
 export default class Home extends Component {
 

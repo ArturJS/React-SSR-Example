@@ -3,6 +3,13 @@ body {
   background-color: orange;
 }
 
+.container {
+  background-color: rgba(0,0,0,0.5);
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  width: 600px;
+  margin: 0 auto;
+}
+
 .home {
   dd {
     margin-bottom: 15px;

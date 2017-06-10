@@ -26,10 +26,18 @@ module.exports = {
     path: assetsPath,
     filename: '[name]-[chunkhash].js',
     chunkFilename: '[name]-[chunkhash].js',
-    publicPath: '/dist/'
+    publicPath: '/dist/',
   },
   module: {
     loaders: [
+      {
+        test: /preboot.*\.js$/, // necessary for fixing preboot library
+        loader: 'string-replace-loader',
+        query: {
+          search: 'var preboot = prebootClient();',
+          replace: 'window.preboot = prebootClient();'
+        }
+      },
       { test: /\.jsx?$/, exclude: /node_modules/, loaders: [strip.loader('debug'), 'babel-loader']},
       { test: /\.json$/, loader: 'json-loader' },
       {
@@ -84,8 +92,15 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: function (module) {
-        return module.context && module.context.indexOf('node_modules') !== -1;
+        return module.context &&
+          module.context.indexOf('node_modules') !== -1;
       }
-    })
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'preboot',
+      minChunks: function (module) {
+        return module.context && module.context.indexOf('preboot') !== -1;
+      }
+    }),
   ]
 };

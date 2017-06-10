@@ -2,11 +2,16 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import config from '../../config';
+import './App.scss';
 
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired
   };
+
+  componentDidMount() {
+    preboot.complete();
+  }
 
   render() {
     return (

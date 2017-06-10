@@ -1,19 +1,10 @@
 import React, { Component } from 'react';
 import config from '../../config';
 import Helmet from 'react-helmet';
+import Counter from '../Counter';
 import './Home.scss';
 
 export default class Home extends Component {
-
-  state = {
-    count: 17
-  };
-
-  plusOne = () => {
-    this.setState({
-      count: this.state.count + 1
-    });
-  };
 
   render() {
     // require the logo image both from client and server
@@ -44,9 +35,11 @@ export default class Home extends Component {
             </p>
           </div>
         </div>
-        <div onClick={this.plusOne}>
-          Count: {this.state.count}
-        </div>
+        <Counter />
+        <Counter />
+        <Counter />
+        <Counter />
+        <Counter />
 
         <div className="container">
           <h3>From the author</h3>

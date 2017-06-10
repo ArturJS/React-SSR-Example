@@ -12,8 +12,18 @@ import {StaticRouter} from 'react-router';
 import Html from './helpers/Html';
 import Client from './client';
 import http from 'http';
+import {getInlineCode} from 'preboot';
 
-// import getRoutes from './routes';
+const prebootOptions = {
+  appRoot: 'body',
+  freeze: false,
+  focus: true,
+  buffer: true,
+  keyPress: true,
+  buttonPress: true
+};
+
+const inlinePrebootCode = getInlineCode(prebootOptions);
 
 const targetUrl = 'http://' + config.apiHost + ':' + config.apiPort;
 const app = new Express();
@@ -75,13 +85,13 @@ app.use((req, res) => {
       </StaticRouter>
     }/>
   )
-    .then(({html}) => {
+    .then(({html}) => { // todo add caching of generated html
       if (context.url) {
         _redirectTo(res, context.url);
         return;
       }
 
-      res.send('<!doctype html>\n' + html);
+      res.send('<!doctype html>\n' + addPrebootInlineCode(html));
     })
     .catch(err => console.error(err));
 
@@ -107,4 +117,8 @@ function _redirectTo(res, redirectUrl) {
     Location: redirectUrl
   });
   res.end();
+}
+
+function addPrebootInlineCode(html) {
+  return html.replace('</head>', '<script>' + inlinePrebootCode + '</script></head>');
 }

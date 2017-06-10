@@ -2,6 +2,7 @@
  * THIS IS THE ENTRY POINT FOR THE CLIENT, JUST LIKE server.js IS THE ENTRY POINT FOR THE SERVER.
  */
 import 'babel-polyfill';
+import 'preboot';
 import React from 'react';
 import {render} from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
@@ -12,7 +13,7 @@ import {
   Home,
   About,
   NotFound
-} from './containers';
+} from './components';
 let dest;
 
 if (__CLIENT__) {

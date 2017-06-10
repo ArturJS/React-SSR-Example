@@ -45,6 +45,7 @@ export default class Html extends Component {
           {/* outputs a <style/> tag with all bootstrap styles + App.scss + it could be CurrentPage.scss. */}
           {/* can smoothen the initial style flash (flicker) on page load in development mode. */}
           {/* ideally one could also include here the style for the current page (Home.scss, About.scss, etc) */}
+          <script src={assets.javascript.preboot} charSet="UTF-8"/>
         </head>
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: content}}/>

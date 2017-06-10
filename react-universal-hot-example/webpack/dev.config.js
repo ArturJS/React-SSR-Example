@@ -78,6 +78,14 @@ module.exports = {
   },
   module: {
     loaders: [
+      {
+        test: /preboot.*\.js$/, // necessary for fixing preboot library
+        loader: 'string-replace-loader',
+        query: {
+          search: 'var preboot = prebootClient();',
+          replace: 'window.preboot = prebootClient();'
+        }
+      },
       { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['babel-loader?' + JSON.stringify(babelLoaderQuery), 'eslint-loader']},
       { test: /\.json$/, loader: 'json-loader' },
       { test: /\.scss$/, loader: 'style-loader!css-loader?importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader?parser=postcss-scss&sourceMap=true!sass-loader?outputStyle=expanded&sourceMap' },
@@ -106,6 +114,12 @@ module.exports = {
       __DEVELOPMENT__: true,
       __DEVTOOLS__: true  // <-------- DISABLE redux-devtools HERE
     }),
-    webpackIsomorphicToolsPlugin.development()
+    webpackIsomorphicToolsPlugin.development(),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'preboot',
+      minChunks: function (module) {
+        return module.context && module.context.indexOf('preboot') !== -1;
+      }
+    })
   ]
 };

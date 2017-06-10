@@ -5,6 +5,7 @@ var path = require('path');
 var webpack = require('webpack');
 var CleanPlugin = require('clean-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var WebpackChunkHash = require('webpack-chunk-hash');
 var strip = require('strip-loader');
 
 var projectRootPath = path.resolve(__dirname, '../');
@@ -78,6 +79,13 @@ module.exports = {
         warnings: false
       }
     }),
-    webpackIsomorphicToolsPlugin
+    new WebpackChunkHash(),
+    webpackIsomorphicToolsPlugin,
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: function (module) {
+        return module.context && module.context.indexOf('node_modules') !== -1;
+      }
+    })
   ]
 };

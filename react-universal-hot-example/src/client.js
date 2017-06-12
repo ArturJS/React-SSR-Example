@@ -6,14 +6,10 @@ import 'preboot';
 import React from 'react';
 import {render} from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
-import {Redirect, Route, Switch} from 'react-router';
+import {renderRoutes} from 'react-router-config';
+import routes from './routes';
+import {App} from './components';
 
-import {
-  App,
-  Home,
-  About,
-  NotFound
-} from './components';
 let dest;
 
 if (__CLIENT__) {
@@ -22,12 +18,7 @@ if (__CLIENT__) {
 
 const Client = (
   <App>
-    <Switch>
-      <Route exact path="/" component={Home}/>
-      <Route path="/about" component={About}/>
-      <Route path="/404" component={NotFound}/>
-      <Redirect from="/*" to="/404"/>
-    </Switch>
+    {renderRoutes(routes)}
   </App>
 );
 

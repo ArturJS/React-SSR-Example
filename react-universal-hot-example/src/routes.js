@@ -1,26 +1,26 @@
 import React from 'react';
 import {Redirect} from 'react-router';
 import {
-  Home,
-  About,
-  NotFound
-} from './client/components';
+  HomePage,
+  AboutPage,
+  NotFoundPage
+} from './client/components/pages';
 
 const routes = [
   {
     path: '/',
     exact: true,
-    component: Home
+    component: HomePage
   },
   {
     path: '/about',
     exact: true,
-    component: About
+    component: AboutPage
   },
   {
     path: '/404',
     exact: true,
-    component: NotFound
+    component: NotFoundPage
   },
   {
     path: '/*',

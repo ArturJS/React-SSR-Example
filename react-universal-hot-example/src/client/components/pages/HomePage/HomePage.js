@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
-import serverSidePropsWrapper from '../../helpers/serverSidePropsWrapper';
-import config from '../../../config';
-import Counter from '../Counter';
-import {homeApi} from '../../api/homeApi';
-import './Home.scss';
+import serverSidePropsWrapper from '../../../helpers/serverSidePropsWrapper';
+import config from '../../../../config';
+import Counter from '../../common/Counter';
+import {homeApi} from '../../../api/homeApi';
+import './HomePage.scss';
 
 const fetchData = () => {
   return homeApi.getPackages();

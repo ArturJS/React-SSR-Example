@@ -2,7 +2,7 @@ import React from 'react';
 import {renderToString} from 'react-router-server';
 import {StaticRouter} from 'react-router';
 import Html from '../client/helpers/Html';
-import Client from './../client';
+import App from '../client/components/App';
 import {getInlineCode} from 'preboot';
 import {matchRoutes} from 'react-router-config';
 import routes from './../routes';
@@ -20,16 +20,14 @@ const inlinePrebootCode = getInlineCode(prebootOptions);
 
 export const initSSRServer = (app) => {
   app.use((req, res) => {
-
-    console.log('===============matchRoutes================');
-    console.dir(matchRoutes(routes, req.url));
     const branch = matchRoutes(routes, req.url);
 
     if (branch[0].redirectTo) {
       _redirectTo(res, branch[0].redirectTo);
       return;
     }
-    console.log('==========================================');
+
+    const pageComponent = branch[0].route.component;
 
     if (__DEVELOPMENT__) {
       // Do not cache webpack stats: the script file would change since
@@ -37,32 +35,49 @@ export const initSSRServer = (app) => {
       webpackIsomorphicTools.refresh();
     }
 
-    const context = {};
-
-    renderToString(
-      <Html assets={webpackIsomorphicTools.assets()} component={
-        __DISABLE_SSR__ ? null :
-          <StaticRouter
-            location={req.url}
-            context={context}>
-            {Client}
-          </StaticRouter>
-      }/>
-    )
-      .then(({html}) => { // todo add caching of generated html
-        if (context.url) {
-          _redirectTo(res, context.url);
-          return;
-        }
-
-        res.send('<!doctype html>\n' + addPrebootInlineCode(html));
-      })
-      .catch(err => console.error(err));
-
+    if (pageComponent && pageComponent.fetchData) {
+      pageComponent.fetchData()
+        .then((data) => {
+          _renderAndSendPage(req, res, pageComponent, data);
+        });
+    }
+    else {
+      _renderAndSendPage(req, res, pageComponent);
+    }
   });
 };
 
 // private methods
+
+function _renderAndSendPage(req, res, pageComponent, data) {
+  const context = {};
+
+  renderToString(
+    <Html
+      assets={webpackIsomorphicTools.assets()}
+      initialPageProps={data}
+      component={
+        __DISABLE_SSR__ ? null :
+        <StaticRouter context={context} location={req.url}>
+          <App>
+            {
+              React.createElement(pageComponent, {data})
+            }
+          </App>
+        </StaticRouter>
+      }
+    />
+  )
+    .then(({html}) => { // todo add caching of generated html
+      if (context.url) {
+        _redirectTo(res, context.url);
+        return;
+      }
+
+      res.send('<!doctype html>\n' + addPrebootInlineCode(html));
+    })
+    .catch(err => console.error(err));
+}
 
 function _redirectTo(res, redirectUrl) {
   res.writeHead(302, {

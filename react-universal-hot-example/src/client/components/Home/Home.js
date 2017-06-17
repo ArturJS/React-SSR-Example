@@ -1,40 +1,41 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import config from '../../../config';
 import Helmet from 'react-helmet';
+import serverSidePropsWrapper from '../../helpers/serverSidePropsWrapper';
+import config from '../../../config';
 import Counter from '../Counter';
 import {homeApi} from '../../api/homeApi';
 import './Home.scss';
 
+const fetchData = () => {
+  return homeApi.getPackages();
+};
+
+@serverSidePropsWrapper(fetchData)
 export default class Home extends Component {
   static propTypes = {
-    data: PropTypes.array
+    serverData: PropTypes.array
   };
 
   state = {
-    data: []
+    serverData: []
   };
 
   async componentDidMount() {
-    if (!this.props.data) {
-      this.setState({data: await Home.fetchData()});
+    if (!this.props.serverData) {
+      this.setState({serverData: await fetchData()});
     }
   }
 
-  static fetchData = () => {
-    return homeApi.getPackages();
-  };
-
   render() {
-    let {data} = this.props;
-    console.log('props data', data);
+    let {serverData} = this.props;
 
-    if (!data) {
-      data = this.state.data;
+    if (!serverData) {
+      serverData = this.state.serverData;
     }
 
     return (
-      <div className="home-page">
+      <div className="home-page" id="HomePage">
         <Helmet title="Home"/>
         <div >
           <div className="container">
@@ -52,7 +53,7 @@ export default class Home extends Component {
         </div>
 
         <ul className="packages-list">
-          {data.map(item => (
+          {serverData.map(item => (
             <li key={item.id} className="package-item">
               <h5>
                 {item.title}

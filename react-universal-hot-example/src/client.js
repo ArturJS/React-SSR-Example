@@ -8,7 +8,7 @@ import {render} from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
 import {renderRoutes} from 'react-router-config';
 import routes from './routes';
-import {App} from './components';
+import {App} from './client/components';
 
 let dest;
 

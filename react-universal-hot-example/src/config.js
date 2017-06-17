@@ -9,7 +9,7 @@ const environment = {
   }
 }[process.env.NODE_ENV || 'development'];
 
-module.exports = Object.assign({
+const config = Object.assign({
   host: process.env.HOST || 'localhost',
   port: process.env.PORT,
   apiHost: process.env.APIHOST || 'localhost',
@@ -37,3 +37,7 @@ module.exports = Object.assign({
   },
 
 }, environment);
+
+const targetUrl = 'http://' + config.apiHost + ':' + config.apiPort;
+
+module.exports = Object.assign(config, {targetUrl});

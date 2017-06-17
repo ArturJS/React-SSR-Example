@@ -4,7 +4,7 @@ import {
   Home,
   About,
   NotFound
-} from './components';
+} from './client/components';
 
 const routes = [
   {
@@ -24,6 +24,7 @@ const routes = [
   },
   {
     path: '/*',
+    redirectTo: '/404', // explicit flag for ssr processing on server.js
     component: () => <Redirect to="/404"/>
   }
 ];

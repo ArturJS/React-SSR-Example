@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import config from '../../config';
+import config from '../../../config';
 import Helmet from 'react-helmet';
 import Counter from '../Counter';
 import './Home.scss';
 
 export default class Home extends Component {
+  static fetchData = () => {
+    return Promise.resolve(true); // todo add api call
+  };
 
   render() {
     // require the logo image both from client and server

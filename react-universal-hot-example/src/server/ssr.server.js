@@ -61,7 +61,7 @@ function _renderAndSendPage(req, res, pageComponent, data) {
         <StaticRouter context={context} location={req.url}>
           <App>
             {
-              React.createElement(pageComponent, {data})
+              React.createElement(pageComponent, {serverData: data})
             }
           </App>
         </StaticRouter>

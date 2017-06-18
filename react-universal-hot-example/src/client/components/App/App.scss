@@ -9,10 +9,11 @@
 }
 
 .nav {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .nav-bar {
@@ -20,7 +21,6 @@
   width: 100vw;
   max-width: 800px;
   margin: 0 auto;
-  background-color: rgba(103, 58, 183, 0.7);
 }
 
 .nav-link {
@@ -32,6 +32,9 @@
   text-decoration: none;
   color: #FFFFFF;
   font-weight: bold;
+  border-bottom: 0 solid #ffa500;
+  transition:  border-bottom-width 0.3s ease, background-color 0.3s ease;
+  will-change:  border-bottom-width, background-color;
 
   &:focus, &:active {
     text-decoration: none;
@@ -39,10 +42,11 @@
 
   &:hover {
     background-color: rgba(0,0,0,.2);
+    border-bottom-width: 4px;
   }
 
   &.selected {
-    text-decoration: underline;
     background-color: rgba(0,0,0,.2);
+    border-bottom-width: 4px;
   }
 }

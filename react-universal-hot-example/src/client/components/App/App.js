@@ -18,6 +18,7 @@ export default class App extends Component {
   render() {
     return (
       <div className="app-shell">
+        <Helmet {...config.app.head}/>
         <div className="nav">
           <div className="nav-bar">
             <NavLink
@@ -41,15 +42,13 @@ export default class App extends Component {
             </NavLink>
           </div>
         </div>
-
-
-        <Helmet {...config.app.head}/>
-        {this.props.children}
-        <div className="well text-center">
+        <div className="page-container">
+          {this.props.children}
+        </div>
+        <div className="footer">
           Have questions? Ask for help <a
-          href="https://github.com/erikras/react-redux-universal-hot-example/issues"
-          target="_blank">on Github</a> or in the <a
-          href="https://discord.gg/0ZcbPKXt5bZZb1Ko" target="_blank">#react-universal</a> channel.
+          href="https://github.com/ArturJS/React-SSR-MiniQ/issues"
+          target="_blank">on Github</a>.
         </div>
       </div>
     );

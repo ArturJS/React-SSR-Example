@@ -1,0 +1,22 @@
+.btn {
+  $c-btn-shadow: rgba(0, 0, 0, .5);
+
+  border: 0;
+  border-radius: 3px;
+  padding: 5px 10px;
+  box-shadow: 0 0 3px $c-btn-shadow;
+  transition: box-shadow 0.25s ease;
+  will-change: box-shadow;
+
+  &:hover, &:focus {
+    box-shadow: 0 0 7px $c-btn-shadow;
+  }
+
+  &:active {
+    box-shadow: 0 0 1px $c-btn-shadow;
+  }
+}
+
+.btn-default {
+  background-color: #FFFFFF;
+}

@@ -35,7 +35,7 @@ export default class Home extends Component {
     }
 
     return (
-      <div className="home-page" id="HomePage">
+      <div className="page home-page">
         <Helmet title="Home"/>
         <div >
           <div className="container">
@@ -44,7 +44,7 @@ export default class Home extends Component {
             <h2>{config.app.description}</h2>
           </div>
         </div>
-        <div>
+        <div className="buttons-group">
           <Counter />
           <Counter />
           <Counter />

@@ -1,15 +1,8 @@
 .container {
-  background-color: rgba(0,0,0,0.5);
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  width: 600px;
-  margin: 0 auto;
+  margin: 15px auto;
 }
 
 .home-page {
-  width: 100vw;
-  max-width: 800px;
-  margin: 0 auto;
-
 
   .packages-list {
     list-style: none;
@@ -17,14 +10,20 @@
   }
 
   .package-item {
-    box-shadow: 0 0 3px rgba(0,0,0,0.3);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.3s ease;
     will-change: box-shadow;
     padding: 10px 15px;
     margin-top: 10px;
 
     &:hover {
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .buttons-group {
+    .btn {
+      margin-right: 10px;
     }
   }
 }

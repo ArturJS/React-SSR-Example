@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Helmet from 'react-helmet';
 
-export default class About extends Component {
+export default class AboutPage extends Component {
 
   state = {
     showKitten: false

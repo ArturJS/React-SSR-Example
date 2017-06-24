@@ -1,6 +1,7 @@
 import React from 'react';
 import {renderToString} from 'react-router-server';
 import {StaticRouter} from 'react-router';
+import {inspect} from 'import-inspector';
 import Html from '../client/helpers/Html';
 import App from '../client/components/App';
 import {getInlineCode} from 'preboot';
@@ -17,6 +18,9 @@ const prebootOptions = {
 };
 
 const inlinePrebootCode = getInlineCode(prebootOptions);
+
+// todo fix (it's incorrect in development mode)
+const webpackStats = require('../../static/dist/output-webpack-stats.json');
 
 export const initSSRServer = (app) => {
   app.use((req, res) => {
@@ -47,10 +51,20 @@ export const initSSRServer = (app) => {
   });
 };
 
+
 // private methods
+
+const lazyModulesCache = {};
 
 function _renderAndSendPage(req, res, pageComponent, data) {
   const context = {};
+
+  let lazyImports = [];
+  // setup a watcher
+  // necessary for react-loadable components
+  let stopInspecting = inspect(metadata => {
+    lazyImports.push(metadata);
+  });
 
   renderToString(
     <Html
@@ -58,13 +72,13 @@ function _renderAndSendPage(req, res, pageComponent, data) {
       initialPageProps={data}
       component={
         __DISABLE_SSR__ ? null :
-        <StaticRouter context={context} location={req.url}>
-          <App>
-            {
-              React.createElement(pageComponent, {serverData: data})
-            }
-          </App>
-        </StaticRouter>
+          <StaticRouter context={context} location={req.url}>
+            <App>
+              {
+                React.createElement(pageComponent, {serverData: data})
+              }
+            </App>
+          </StaticRouter>
       }
     />
   )
@@ -74,9 +88,50 @@ function _renderAndSendPage(req, res, pageComponent, data) {
         return;
       }
 
+      // necessary for react-loadable components
+      stopInspecting();
+      html = _addLazyModules(html, req.url, lazyImports);
+
       res.send('<!doctype html>\n' + addPrebootInlineCode(html));
     })
     .catch(err => console.error(err));
+}
+
+function _addLazyModules(html, requestUrl, lazyImports) {
+  if (
+    lazyImports.length === 0 && !lazyModulesCache[requestUrl] // necessary due to "lazyImports" generates only on first invocation ("renderToString" uses cache internally)
+  ) return html;
+
+  if (lazyImports.length > 0) {
+    lazyModulesCache[requestUrl] = lazyImports;
+  }
+
+  lazyImports = lazyModulesCache[requestUrl];
+
+  const mainAssetPath = _getMainPathForModules();
+  console.log('mainAssetPath', mainAssetPath);
+  console.log('imported', lazyImports);
+
+  const lazyScripts = lazyImports.map(lazyImport => {
+    const moduleName = _getChunkNameByPath(lazyImport.serverSideRequirePath);
+    const fileName = webpackStats.assetsByChunkName[moduleName];
+
+    console.log('moduleName', moduleName);
+    console.log('fileName', fileName);
+
+    return `<script src="${mainAssetPath + fileName}" charset="UTF-8"><script/>`;
+  });
+
+  return html.replace('</body>', lazyScripts + '</body>');
+}
+
+function _getChunkNameByPath(serverSideRequirePath) {
+  return serverSideRequirePath.substr(serverSideRequirePath.lastIndexOf('\\') + 1);
+}
+
+function _getMainPathForModules() {
+  const mainPath = webpackIsomorphicTools.assets().javascript.main;
+  return mainPath.substr(0, mainPath.lastIndexOf('/') + 1);
 }
 
 function _redirectTo(res, redirectUrl) {

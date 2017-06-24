@@ -15,7 +15,7 @@ const config = Object.assign({
   apiHost: process.env.APIHOST || 'localhost',
   apiPort: process.env.APIPORT,
   app: {
-    title: 'React Redux Example',
+    title: 'React SSR Example',
     description: 'All the modern best practices in one example.',
     head: {
       titleTemplate: 'React Example: %s',

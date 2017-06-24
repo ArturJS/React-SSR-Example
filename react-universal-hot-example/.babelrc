@@ -1,7 +1,17 @@
 {
-  "presets": ["react", "es2015", "stage-0"],
+  "presets": [
+    "react",
+    "es2015",
+    "stage-0"
+  ],
 
   "plugins": [
+    "syntax-dynamic-import",
+    ["import-inspector", {
+      "serverSideRequirePath": true,
+      "webpackRequireWeakId": true
+    }],
+    "babel-plugin-dynamic-import-node",
     "transform-runtime",
     "add-module-exports",
     "transform-decorators-legacy",

@@ -7,6 +7,7 @@ var webpack = require('webpack');
 var assetsPath = path.resolve(__dirname, '../static/dist');
 var host = (process.env.HOST || 'localhost');
 var port = (+process.env.PORT + 1) || 3001;
+var StatsWriterPlugin = require('webpack-stats-plugin').StatsWriterPlugin;
 
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
@@ -22,44 +23,6 @@ try {
   console.error(err);
 }
 
-
-var babelrcObjectDevelopment = babelrcObject.env && babelrcObject.env.development || {};
-
-// merge global and dev-only plugins
-var combinedPlugins = babelrcObject.plugins || [];
-combinedPlugins = combinedPlugins.concat(babelrcObjectDevelopment.plugins);
-
-var babelLoaderQuery = Object.assign({}, babelrcObjectDevelopment, babelrcObject, {plugins: combinedPlugins});
-delete babelLoaderQuery.env;
-
-// Since we use .babelrc for client and server, and we don't want HMR enabled on the server, we have to add
-// the babel plugin react-transform-hmr manually here.
-
-// make sure react-transform is enabled
-babelLoaderQuery.plugins = babelLoaderQuery.plugins || [];
-var reactTransform = null;
-for (var i = 0; i < babelLoaderQuery.plugins.length; ++i) {
-  var plugin = babelLoaderQuery.plugins[i];
-  if (Array.isArray(plugin) && plugin[0] === 'react-transform') {
-    reactTransform = plugin;
-  }
-}
-
-if (!reactTransform) {
-  reactTransform = ['react-transform', {transforms: []}];
-  babelLoaderQuery.plugins.push(reactTransform);
-}
-
-if (!reactTransform[1] || !reactTransform[1].transforms) {
-  reactTransform[1] = Object.assign({}, reactTransform[1], {transforms: []});
-}
-
-// make sure react-transform-hmr is enabled
-reactTransform[1].transforms.push({
-  transform: 'react-transform-hmr',
-  imports: ['react'],
-  locals: ['module']
-});
 
 module.exports = {
   devtool: 'inline-source-map',
@@ -77,7 +40,7 @@ module.exports = {
     publicPath: 'http://' + host + ':' + port + '/dist/'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /preboot.*\.js$/, // necessary for fixing preboot library
         loader: 'string-replace-loader',
@@ -86,15 +49,30 @@ module.exports = {
           replace: 'window.preboot = prebootClient();'
         }
       },
-      { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['babel-loader?' + JSON.stringify(babelLoaderQuery), 'eslint-loader']},
-      { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.scss$/, loader: 'style-loader!css-loader?importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader?parser=postcss-scss&sourceMap=true!sass-loader?outputStyle=expanded&sourceMap' },
-      { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
-      { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
-      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" },
-      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader" },
-      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=image/svg+xml" },
-      { test: webpackIsomorphicToolsPlugin.regular_expression('images'), loader: 'url-loader?limit=10240' }
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: babelrcObject
+          },
+          // { // commented due to parsing error with dynamic import in routes.js
+          //   loader: 'eslint-loader'
+          // }
+        ]
+      },
+      {test: /\.json$/, loader: 'json-loader'},
+      {
+        test: /\.scss$/,
+        loader: 'style-loader!css-loader?importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader?parser=postcss-scss&sourceMap=true!sass-loader?outputStyle=expanded&sourceMap'
+      },
+      {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff"},
+      {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff"},
+      {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream"},
+      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader"},
+      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=image/svg+xml"},
+      {test: webpackIsomorphicToolsPlugin.regular_expression('images'), loader: 'url-loader?limit=10240'}
     ]
   },
   resolve: {
@@ -116,10 +94,26 @@ module.exports = {
     }),
     webpackIsomorphicToolsPlugin.development(),
     new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: function (module) {
+        return module.context &&
+          module.context.indexOf('node_modules') !== -1;
+      }
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
       name: 'preboot',
       minChunks: function (module) {
         return module.context && module.context.indexOf('preboot') !== -1;
       }
+    }),
+    //CommonChunksPlugin will now extract all the common modules from vendor and main bundles
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest' //But since there are no more common modules between them we end up with just the runtime code included in the manifest file
+    }),
+    new StatsWriterPlugin({
+      // fields: null, // extract all fields
+      fields: ['assetsByChunkName'],
+      filename: 'output-webpack-stats.json'
     })
   ]
 };

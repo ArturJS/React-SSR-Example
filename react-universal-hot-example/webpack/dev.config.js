@@ -7,7 +7,6 @@ var webpack = require('webpack');
 var assetsPath = path.resolve(__dirname, '../static/dist');
 var host = (process.env.HOST || 'localhost');
 var port = (+process.env.PORT + 1) || 3001;
-var StatsWriterPlugin = require('webpack-stats-plugin').StatsWriterPlugin;
 
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
@@ -109,11 +108,6 @@ module.exports = {
     //CommonChunksPlugin will now extract all the common modules from vendor and main bundles
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest' //But since there are no more common modules between them we end up with just the runtime code included in the manifest file
-    }),
-    new StatsWriterPlugin({
-      // fields: null, // extract all fields
-      fields: ['assetsByChunkName'],
-      filename: 'output-webpack-stats.json'
     })
   ]
 };

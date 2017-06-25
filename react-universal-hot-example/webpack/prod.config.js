@@ -7,7 +7,6 @@ var CleanPlugin = require('clean-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var WebpackChunkHash = require('webpack-chunk-hash');
 var strip = require('strip-loader');
-var StatsWriterPlugin = require('webpack-stats-plugin').StatsWriterPlugin;
 
 var projectRootPath = path.resolve(__dirname, '../');
 var assetsPath = path.resolve(projectRootPath, './static/dist');
@@ -114,11 +113,6 @@ module.exports = {
     //CommonChunksPlugin will now extract all the common modules from vendor and main bundles
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest' //But since there are no more common modules between them we end up with just the runtime code included in the manifest file
-    }),
-    new StatsWriterPlugin({
-      // fields: null, // extract all fields
-      fields: ['assetsByChunkName'],
-      filename: 'output-webpack-stats.json'
     })
   ]
 };

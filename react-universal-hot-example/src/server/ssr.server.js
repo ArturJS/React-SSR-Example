@@ -19,9 +19,6 @@ const prebootOptions = {
 
 const inlinePrebootCode = getInlineCode(prebootOptions);
 
-// todo fix (it's incorrect in development mode)
-const webpackStats = require('../../static/dist/output-webpack-stats.json');
-
 export const initSSRServer = (app) => {
   app.use((req, res) => {
     const branch = matchRoutes(routes, req.url);
@@ -60,9 +57,9 @@ function _renderAndSendPage(req, res, pageComponent, data) {
   const context = {};
 
   let lazyImports = [];
+
   // setup a watcher
-  // necessary for react-loadable components
-  let stopInspecting = inspect(metadata => {
+  let stopInspecting = inspect(metadata => { // necessary for react-loadable components
     lazyImports.push(metadata);
   });
 
@@ -82,17 +79,17 @@ function _renderAndSendPage(req, res, pageComponent, data) {
       }
     />
   )
-    .then(({html}) => { // todo add caching of generated html
+    .then(({html}) => {
       if (context.url) {
         _redirectTo(res, context.url);
         return;
       }
 
-      // necessary for react-loadable components
-      stopInspecting();
+      stopInspecting(); // necessary for react-loadable components
       html = _addLazyModules(html, req.url, lazyImports);
+      html = addPrebootInlineCode(html);
 
-      res.send('<!doctype html>\n' + addPrebootInlineCode(html));
+      res.send('<!doctype html>\n' + html);
     })
     .catch(err => console.error(err));
 }
@@ -108,30 +105,17 @@ function _addLazyModules(html, requestUrl, lazyImports) {
 
   lazyImports = lazyModulesCache[requestUrl];
 
-  const mainAssetPath = _getMainPathForModules();
-  console.log('mainAssetPath', mainAssetPath);
-  console.log('imported', lazyImports);
-
   const lazyScripts = lazyImports.map(lazyImport => {
-    const moduleName = _getChunkNameByPath(lazyImport.serverSideRequirePath);
-    const fileName = webpackStats.assetsByChunkName[moduleName];
-
-    console.log('moduleName', moduleName);
-    console.log('fileName', fileName);
-
-    return `<script src="${mainAssetPath + fileName}" charset="UTF-8"><script/>`;
+    const lazyChunkPath = _getChunkPath(lazyImport.serverSideRequirePath);
+    return `<script src="${lazyChunkPath}" charset="UTF-8" async><script/>`;
   });
 
-  return html.replace('</body>', lazyScripts + '</body>');
+  return html.replace('</head>', lazyScripts + '</head>');
 }
 
-function _getChunkNameByPath(serverSideRequirePath) {
-  return serverSideRequirePath.substr(serverSideRequirePath.lastIndexOf('\\') + 1);
-}
-
-function _getMainPathForModules() {
-  const mainPath = webpackIsomorphicTools.assets().javascript.main;
-  return mainPath.substr(0, mainPath.lastIndexOf('/') + 1);
+function _getChunkPath(serverSideRequirePath) {
+  const moduleName = serverSideRequirePath.substr(serverSideRequirePath.lastIndexOf('\\') + 1);
+  return webpackIsomorphicTools.assets().javascript[moduleName];
 }
 
 function _redirectTo(res, redirectUrl) {

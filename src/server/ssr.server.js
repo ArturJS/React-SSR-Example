@@ -7,7 +7,10 @@ import App from '../client/components/App';
 import {getInlineCode} from 'preboot';
 import {matchRoutes} from 'react-router-config';
 import routes from './../routes';
-
+import {JSDOM} from 'jsdom';
+const dom = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`);
+console.log(dom.window.document.querySelector("p").textContent); // "Hello world"
+// todo add simple d3 bar chart in lazy page
 const prebootOptions = {
   appRoot: 'body',
   freeze: false,

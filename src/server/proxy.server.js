@@ -1,19 +1,19 @@
 import httpProxy from 'http-proxy';
 import config from './../config';
 
-const {targetUrl} = config;
+const {apiTargetUrl} = config;
 const proxy = httpProxy.createProxyServer({
-  target: targetUrl,
+  target: apiTargetUrl,
   ws: true
 });
 
 export const initProxyServer = (app, server) => {
   app.use('/api', (req, res) => {
-    proxy.web(req, res, {target: targetUrl});
+    proxy.web(req, res, {target: apiTargetUrl});
   });
 
   app.use('/ws', (req, res) => {
-    proxy.web(req, res, {target: targetUrl + '/ws'});
+    proxy.web(req, res, {target: apiTargetUrl + '/ws'});
   });
 
   server.on('upgrade', (req, socket, head) => {

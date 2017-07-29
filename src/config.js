@@ -38,6 +38,7 @@ const config = Object.assign({
 
 }, environment);
 
-const targetUrl = 'http://' + config.apiHost + ':' + config.apiPort;
+const apiTargetUrl = 'http://' + config.apiHost + ':' + config.apiPort;
+const uiTargetUrl = 'http://' + config.host + ':' + config.port;
 
-module.exports = Object.assign(config, {targetUrl});
+module.exports = Object.assign(config, {apiTargetUrl, uiTargetUrl});

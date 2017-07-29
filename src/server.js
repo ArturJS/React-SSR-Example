@@ -19,8 +19,8 @@ if (config.port) {
     if (err) {
       console.error(err);
     }
-    console.info(`----\n==> ✅  ${config.app.title} is running, talking to API server on ${config.apiPort}.`);
-    console.info(`==> 💻  Open ${config.targetUrl} in a browser to view the app.`);
+    console.info(`----\n==> ✅  ${config.app.title} is running, talking to API server on ${config.apiTargetUrl}.`);
+    console.info(`==> 💻  Open ${config.uiTargetUrl} in a browser to view the app.`);
   });
 }
 else {

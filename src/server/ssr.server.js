@@ -8,9 +8,7 @@ import {getInlineCode} from 'preboot';
 import {matchRoutes} from 'react-router-config';
 import routes from './../routes';
 import {JSDOM} from 'jsdom';
-import fs from 'fs';
 
-const d3raw = fs.readFileSync('node_modules/d3/build/d3.js', 'utf-8');
 const prebootOptions = {
   appRoot: 'body',
   freeze: false,

@@ -63,40 +63,65 @@ export const applyData = ({selection, isEntering, data, height}) => {
     textEl = selection.append('text');
   }
 
-  rectEl
-    .attr('width', 50)
-    .attr('x', (d, index) => {
-      return index * 60 + 10;
-    })
-    .attr('fill', backgroundColor)
-    .transition()
-    .duration(1000)
-    .attr('height', (d) => {
-      return height - getHeightScale({height, data})(d);
-    });
+  if (__CLIENT__) {
+    rectEl
+      .attr('width', 50)
+      .attr('x', (d, index) => {
+        return index * 60 + 10;
+      })
+      .attr('fill', backgroundColor)
+      .transition()
+      .duration(1000)
+      .attr('height', (d) => {
+        return height - getHeightScale({height, data})(d);
+      });
 
-  textEl
-    .attr('text-anchor', 'middle')
-    .attr('x', (d, index) => {
-      return index * 60 + 35;
-    })
-    .attr('fill', 'red')
-    .attr('transform', 'scale(1, -1)')
-    .transition()
-    .duration(1000)
-    .attr('y', (d, index) => {
-      return getHeightScale({height, data})(d) - height;
-    })
-    .tween('text', function (d) {
-      let _thisEl = d3.select(this);
-      let interpolate = d3.interpolate(+_thisEl.text(), d);
-      return (t) => {
-        _thisEl
-          .text(
-            Math.round(interpolate(t))
-          );
-      };
-    });
+    textEl
+      .attr('text-anchor', 'middle')
+      .attr('x', (d, index) => {
+        return index * 60 + 35;
+      })
+      .attr('fill', 'red')
+      .attr('transform', 'scale(1, -1)')
+      .transition()
+      .duration(1000)
+      .attr('y', (d, index) => {
+        return getHeightScale({height, data})(d) - height;
+      })
+      .tween('text', function (d) {
+        let _thisEl = d3.select(this);
+        let interpolate = d3.interpolate(+_thisEl.text(), d);
+        return (t) => {
+          _thisEl
+            .text(
+              Math.round(interpolate(t))
+            );
+        };
+      });
+  }
+  else {
+    rectEl
+      .attr('width', 50)
+      .attr('x', (d, index) => {
+        return index * 60 + 10;
+      })
+      .attr('fill', backgroundColor)
+      .attr('height', (d) => {
+        return height - getHeightScale({height, data})(d);
+      });
+
+    textEl
+      .attr('text-anchor', 'middle')
+      .attr('x', (d, index) => {
+        return index * 60 + 35;
+      })
+      .attr('fill', 'red')
+      .attr('transform', 'scale(1, -1)')
+      .attr('y', (d, index) => {
+        return getHeightScale({height, data})(d) - height;
+      })
+      .text(d => d);
+  }
 };
 
 export const getYAxis = ({height, data}) => {

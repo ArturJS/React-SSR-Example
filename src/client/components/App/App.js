@@ -29,6 +29,13 @@ export default class App extends Component {
               Home
             </NavLink>
             <NavLink
+              to="/charts"
+              exact
+              className="nav-link"
+              activeClassName="selected">
+              Charts
+            </NavLink>
+            <NavLink
               to="/about"
               className="nav-link"
               activeClassName="selected">

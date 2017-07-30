@@ -4,6 +4,7 @@ import Loadable from 'react-loadable';
 import {report} from 'import-inspector';
 import path from 'path';
 
+import ChartsPage from './client/components/pages/ChartsPage';
 import HomePage from './client/components/pages/HomePage';
 import NotFoundPage from './client/components/pages/NotFoundPage';
 
@@ -46,6 +47,11 @@ const routes = [
       ),
       loading: <div>Loading...</div>
     })
+  },
+  {
+    path: '/charts',
+    exact: true,
+    component: ChartsPage
   },
   {
     path: '/404',

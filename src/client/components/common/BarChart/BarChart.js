@@ -5,6 +5,7 @@ import _ from 'lodash';
 import * as d3 from 'd3';
 
 export const initBarChart = ({svgElement, height, data}) => {
+  svgElement.html(''); // todo: reuse existing html markup by using my custom d3.restoreDatum();
   svgElement.style('overflow', 'visible');
   svgElement
     .append('g')
@@ -131,6 +132,28 @@ export default class BarChart extends Component {
     }).isRequired
   };
 
+  componentWillMount() {
+    if (__SERVER__) {
+      let {
+        height,
+        data
+      } = this.props;
+
+      this.componentId = _.uniqueId('BarChart_');
+
+      global.chartsRenderQueue.barChartQueue.push(
+        () => {
+          let svgRootEl = d3.select(document.getElementById(this.componentId));
+          initBarChart({
+            svgElement: svgRootEl,
+            height,
+            data
+          });
+        }
+      );
+    }
+  }
+
   componentDidMount() {
     let {
       height,
@@ -167,6 +190,7 @@ export default class BarChart extends Component {
 
     return (
       <svg
+        id={this.componentId}
         className={classNames('bar-chart', {[className]: !!className})}
         ref={node => this.svgElement = d3.select(node)}
         width={width}

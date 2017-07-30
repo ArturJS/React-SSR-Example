@@ -8,9 +8,9 @@ import {getInlineCode} from 'preboot';
 import {matchRoutes} from 'react-router-config';
 import routes from './../routes';
 import {JSDOM} from 'jsdom';
-const dom = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`);
-console.log(dom.window.document.querySelector("p").textContent); // "Hello world"
-// todo add simple d3 bar chart in lazy page
+import fs from 'fs';
+
+const d3raw = fs.readFileSync('node_modules/d3/build/d3.js', 'utf-8');
 const prebootOptions = {
   appRoot: 'body',
   freeze: false,
@@ -39,6 +39,8 @@ export const initSSRServer = (app) => {
       webpackIsomorphicTools.refresh();
     }
 
+    _resetGlobalChartsRenderQueue();
+
     if (pageComponent && pageComponent.fetchData) {
       pageComponent.fetchData()
         .then((data) => {
@@ -56,6 +58,13 @@ export const initSSRServer = (app) => {
 
 const lazyModulesCache = {};
 
+function _resetGlobalChartsRenderQueue() {
+  global.chartsRenderQueue = {
+    barChartQueue: []
+  };
+}
+
+// todo: use https://github.com/audreyt/node-webworker-threads
 function _renderAndSendPage(req, res, pageComponent, data) {
   const context = {};
 
@@ -90,9 +99,12 @@ function _renderAndSendPage(req, res, pageComponent, data) {
 
       stopInspecting(); // necessary for react-loadable components
       html = _addLazyModules(html, req.url, lazyImports);
-      html = addPrebootInlineCode(html);
+      html = _addPrebootInlineCode(html);
 
-      res.send('<!doctype html>\n' + html);
+      _renderCharts(html) // todo: use NodeJS 8 with async await
+        .then((html) => {
+          res.send('<!doctype html>\n' + html);
+        });
     })
     .catch(err => console.error(err));
 }
@@ -128,6 +140,25 @@ function _redirectTo(res, redirectUrl) {
   res.end();
 }
 
-function addPrebootInlineCode(html) {
+function _addPrebootInlineCode(html) {
   return html.replace('</head>', '<script>' + inlinePrebootCode + '</script></head>');
+}
+
+function _renderCharts(html) {
+  return new Promise((res, rej) => {
+    const {barChartQueue} = global.chartsRenderQueue;
+    if (barChartQueue.length === 0) {
+      res(html);
+      return;
+    }
+
+    let {window} = new JSDOM(html);
+    global.d3 = window.d3;
+    global.document = window.document;
+    barChartQueue.forEach((renderChartFn) => renderChartFn());
+
+    // todo: d3.saveDatum = ...
+
+    res(window.document.documentElement.outerHTML);
+  });
 }

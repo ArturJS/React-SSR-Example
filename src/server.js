@@ -9,7 +9,7 @@ import {initSSRServer} from './server/ssr.server';
 const app = new Express();
 const server = new http.Server(app);
 
-initStaticServer(app);
+initStaticServer(app); // todo: here better use nginx
 initProxyServer(app, server);
 initSSRServer(app);
 

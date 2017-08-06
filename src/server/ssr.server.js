@@ -155,8 +155,6 @@ function _renderCharts(html) {
     global.document = window.document;
     barChartQueue.forEach((renderChartFn) => renderChartFn());
 
-    // todo: d3.saveDatum = ...
-
     res(window.document.documentElement.outerHTML);
   });
 }

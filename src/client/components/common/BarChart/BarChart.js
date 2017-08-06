@@ -3,21 +3,31 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'lodash';
 import * as d3 from 'd3';
+import {saveDatum, restoreDatum} from '../../../helpers/d3jsHelpers';
 
 export const initBarChart = ({svgElement, height, data}) => {
-  svgElement.html(''); // todo: reuse existing html markup by using my custom d3.restoreDatum();
-  svgElement.style('overflow', 'visible');
-  svgElement
-    .append('g')
-    .attr('class', 'bar-chart__y-axis')
-    .call(getYAxis({height, data}));
+  if (__SERVER__ || !svgElement.html()) {
+    svgElement
+      .append('g')
+      .attr('class', 'bar-chart__y-axis')
+      .call(getYAxis({height, data}));
 
-  svgElement
-    .append('g')
-    .attr('class', 'bar-chart__datasets')
-    .attr('transform', `translate(0, ${height}) scale(1, -1)`);
+    svgElement
+      .append('g')
+      .attr('class', 'bar-chart__datasets')
+      .attr('transform', `translate(0, ${height}) scale(1, -1)`);
+  }
+  else if (__CLIENT__ && svgElement.html()) {
+    let elementId = svgElement.attr('id');
+    restoreDatum(svgElement.node());
+  }
 
   updateBarChart({svgElement, data, height});
+
+  if (__SERVER__) {
+    saveDatum(svgElement.node());
+    svgElement.attr('id', null);
+  }
 };
 
 export const updateBarChart = ({svgElement, data, height}) => {
@@ -158,6 +168,10 @@ export default class BarChart extends Component {
   };
 
   componentWillMount() {
+    this.defaultStyles = {
+      overflow: 'visible'
+    };
+
     if (__SERVER__) {
       let {
         height,
@@ -216,6 +230,7 @@ export default class BarChart extends Component {
     return (
       <svg
         id={this.componentId}
+        style={this.defaultStyles}
         className={classNames('bar-chart', {[className]: !!className})}
         ref={node => this.svgElement = d3.select(node)}
         width={width}

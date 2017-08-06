@@ -53,9 +53,12 @@ export default class App extends Component {
           {this.props.children}
         </div>
         <div className="footer">
-          Have questions? Ask for help <a
-          href="https://github.com/ArturJS/React-SSR-MiniQ/issues"
-          target="_blank">on Github</a>.
+          Have questions? Ask for help
+          <a
+            href="https://github.com/ArturJS/React-SSR-MiniQ/issues"
+            target="_blank">
+            on Github
+          </a>.
         </div>
       </div>
     );

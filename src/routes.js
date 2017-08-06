@@ -19,10 +19,10 @@ import NotFoundPage from './client/components/pages/NotFoundPage';
 
 
 // taken from https://github.com/webpack/webpack/issues/2461
-if(typeof System === "undefined" || typeof System.import !== "function") {
+if (typeof System === 'undefined' || typeof System.import !== 'function') {
   global.System = {
-    import: function(path) {
-      return Promise.resolve(require(path));
+    import: (importPath) => {
+      return Promise.resolve(require(importPath));
     }
   };
 }
@@ -42,8 +42,8 @@ const routes = [
         System.import(/* webpackChunkName: 'AboutPage' */'./client/components/pages/AboutPage/AboutPage'),
         {
           serverSideRequirePath: path.resolve(__dirname, './client/components/pages/AboutPage/AboutPage'),
-           webpackRequireWeakId: () => require.resolveWeak('./client/components/pages/AboutPage/AboutPage')
-         }
+          webpackRequireWeakId: () => require.resolveWeak('./client/components/pages/AboutPage/AboutPage')
+        }
       ),
       loading: <div>Loading...</div>
     })

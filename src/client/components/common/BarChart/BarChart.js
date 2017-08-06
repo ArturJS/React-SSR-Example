@@ -94,10 +94,10 @@ export const applyData = ({selection, isEntering, data, height}) => {
       .attr('transform', 'scale(1, -1)')
       .transition()
       .duration(1000)
-      .attr('y', (d, index) => {
+      .attr('y', (d) => {
         return getHeightScale({height, data})(d) - height;
       })
-      .tween('text', function (d) {
+      .tween('text', function (d) { // eslint-disable-line func-names
         let _thisEl = d3.select(this);
         let interpolate = d3.interpolate(+_thisEl.text(), d);
         return (t) => {
@@ -126,7 +126,7 @@ export const applyData = ({selection, isEntering, data, height}) => {
       })
       .attr('fill', 'red')
       .attr('transform', 'scale(1, -1)')
-      .attr('y', (d, index) => {
+      .attr('y', (d) => {
         return getHeightScale({height, data})(d) - height;
       })
       .text(d => d);
@@ -166,13 +166,6 @@ export default class BarChart extends Component {
       })
     }).isRequired
   };
-
-  isInitialized = false;
-  svgRootEl = null;
-  defaultStyles = {
-    overflow: 'visible'
-  };
-
 
   componentWillMount() {
     let {
@@ -235,6 +228,12 @@ export default class BarChart extends Component {
       data
     });
   }
+
+  isInitialized = false;
+  svgRootEl = null;
+  defaultStyles = {
+    overflow: 'visible'
+  };
 
 
   render() {

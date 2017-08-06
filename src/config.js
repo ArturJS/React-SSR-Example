@@ -34,11 +34,11 @@ const config = Object.assign({
         {property: 'og:image:height', content: '200'}
       ]
     }
-  },
+  }
 
 }, environment);
 
-const apiTargetUrl = 'http://' + config.apiHost + ':' + config.apiPort;
-const uiTargetUrl = 'http://' + config.host + ':' + config.port;
+const apiTargetUrl = `http://${config.apiHost}:${config.apiPort}`;
+const uiTargetUrl = `http://${config.host}:${config.port}`;
 
 module.exports = Object.assign(config, {apiTargetUrl, uiTargetUrl});

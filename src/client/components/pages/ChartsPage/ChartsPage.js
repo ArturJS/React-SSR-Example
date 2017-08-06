@@ -27,7 +27,7 @@ export default class ChartsPage extends Component {
 
   terminateUpdateInterval() {
     clearInterval(this.updateInterval);
-  };
+  }
 
   initUpdateInterval() {
     this.updateInterval = setInterval(() => {
@@ -47,7 +47,7 @@ export default class ChartsPage extends Component {
             }
           }
         };
-      })
+      });
     }, 3000);
   }
 

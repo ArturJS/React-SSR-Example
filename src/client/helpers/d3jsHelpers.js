@@ -6,7 +6,7 @@ export const saveDatum = (container) => {
       let text = JSON.stringify(node.__data__);
       node.setAttribute('data-datum', text);
     }
-  })
+  });
 };
 
 export const restoreDatum = (container = document.body) => {
@@ -24,6 +24,7 @@ export const restoreDatum = (container = document.body) => {
   }
 };
 
+/* eslint-disable no-labels */
 function _domTraversal(root, enter, exit = _.noop) {
   let node = root;
   start: while (node) {
@@ -34,14 +35,17 @@ function _domTraversal(root, enter, exit = _.noop) {
     }
     while (node) {
       exit(node);
-      if (node == root) {
+      if (node === root) {
         node = null;
-      } else if (node.nextSibling) {
+      }
+      else if (node.nextSibling) {
         node = node.nextSibling;
         continue start;
-      } else {
+      }
+      else {
         node = node.parentNode;
       }
     }
   }
 }
+/* eslint-enable no-labels */

@@ -59,9 +59,9 @@ module.exports = {
             loader: 'babel-loader',
             options: babelrcObject
           },
-          // {
-          //   loader: 'eslint-loader'
-          // }
+          {
+            loader: 'eslint-loader'
+          }
         ]
       },
       {test: /\.json$/, loader: 'json-loader'},

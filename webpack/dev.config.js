@@ -53,10 +53,13 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
+            loader: 'react-hot-loader'
+          },
+          {
             loader: 'babel-loader',
             options: babelrcObject
           },
-          // { // commented due to parsing error with dynamic import in routes.js
+          // {
           //   loader: 'eslint-loader'
           // }
         ]

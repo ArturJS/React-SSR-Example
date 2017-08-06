@@ -18,7 +18,6 @@ export const initBarChart = ({svgElement, height, data}) => {
       .attr('transform', `translate(0, ${height}) scale(1, -1)`);
   }
   else if (__CLIENT__ && svgElement.html()) {
-    let elementId = svgElement.attr('id');
     restoreDatum(svgElement.node());
   }
 
@@ -159,6 +158,7 @@ export default class BarChart extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     data: PropTypes.shape({
+      id: PropTypes.number.isRequired,
       labels: PropTypes.arrayOf(PropTypes.string),
       dataset: PropTypes.shape({
         backgroundColor: PropTypes.string,
@@ -167,19 +167,22 @@ export default class BarChart extends Component {
     }).isRequired
   };
 
+  isInitialized = false;
+  svgRootEl = null;
+  defaultStyles = {
+    overflow: 'visible'
+  };
+
+
   componentWillMount() {
-    this.defaultStyles = {
-      overflow: 'visible'
-    };
+    let {
+      height,
+      data
+    } = this.props;
+
+    this.componentId = `BarChart_${data.id}`;
 
     if (__SERVER__) {
-      let {
-        height,
-        data
-      } = this.props;
-
-      this.componentId = _.uniqueId('BarChart_');
-
       global.chartsRenderQueue.barChartQueue.push(
         () => {
           let svgRootEl = d3.select(document.getElementById(this.componentId));
@@ -191,19 +194,33 @@ export default class BarChart extends Component {
         }
       );
     }
+    else if (__CLIENT__ && document.getElementById(this.componentId)) {
+      // this.svgRootEl - necessary to avoid discarding of server side html markup by React on client side
+      this.svgRootEl = d3.select(document.getElementById(this.componentId));
+      initBarChart({
+        svgElement: this.svgRootEl,
+        height,
+        data
+      });
+      this.isInitialized = true;
+    }
   }
 
   componentDidMount() {
-    let {
-      height,
-      data
-    } = this.props;
+    if (!this.isInitialized) {
+      let {
+        height,
+        data
+      } = this.props;
 
-    initBarChart({
-      svgElement: this.svgElement,
-      height,
-      data
-    });
+      initBarChart({
+        svgElement: this.svgElement,
+        height,
+        data
+      });
+    }
+
+    this.svgRootEl = null;
   }
 
   componentDidUpdate() {
@@ -228,14 +245,26 @@ export default class BarChart extends Component {
     } = this.props;
 
     return (
-      <svg
-        id={this.componentId}
-        style={this.defaultStyles}
-        className={classNames('bar-chart', {[className]: !!className})}
-        ref={node => this.svgElement = d3.select(node)}
-        width={width}
-        height={height}
-      />
+      this.svgRootEl
+        ?
+        <svg
+          id={this.componentId}
+          style={this.defaultStyles}
+          className={classNames('bar-chart', {[className]: !!className})}
+          ref={node => this.svgElement = d3.select(node)}
+          width={width}
+          height={height}
+          dangerouslySetInnerHTML={{__html: this.svgRootEl && this.svgRootEl.html()}}
+        />
+        :
+        <svg
+          id={this.componentId}
+          style={this.defaultStyles}
+          className={classNames('bar-chart', {[className]: !!className})}
+          ref={node => this.svgElement = d3.select(node)}
+          width={width}
+          height={height}
+        />
     );
   }
 }

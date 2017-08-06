@@ -7,6 +7,7 @@ import './ChartsPage.scss';
 export default class ChartsPage extends Component {
   state = {
     barChartData: {
+      id: 1,
       labels: ['A', 'B', 'C', 'D', 'E'],
       dataset: {
         backgroundColor: '#546E7A',
@@ -38,6 +39,7 @@ export default class ChartsPage extends Component {
 
         return {
           barChartData: {
+            id: 1,
             labels,
             dataset: {
               backgroundColor: '#546E7A',

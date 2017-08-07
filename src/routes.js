@@ -4,18 +4,8 @@ import Loadable from 'react-loadable';
 import {report} from 'import-inspector';
 import path from 'path';
 
-import ChartsPage from './client/components/pages/ChartsPage';
 import HomePage from './client/components/pages/HomePage';
 import NotFoundPage from './client/components/pages/NotFoundPage';
-
-// const LoadableComponent = (componentPath) => { // Critical dependency: the request of a dependency is an expression
-//   return Loadable({ // see also https://github.com/AngularClass/angular-starter/issues/993
-//     loader: () => System.import(/* webpackMode: "lazy" */componentPath),
-//     loading: <div>Loading...</div>,
-//     serverSideRequirePath: path.resolve(__dirname, componentPath),
-//     webpackRequireWeakId: () => require.resolveWeak(componentPath)
-//   });
-// };
 
 
 // taken from https://github.com/webpack/webpack/issues/2461
@@ -36,7 +26,6 @@ const routes = [
   {
     path: '/about',
     exact: true,
-    // component: LoadableComponent('./client/components/pages/AboutPage/AboutPage')
     component: Loadable({
       loader: () => report(
         System.import(/* webpackChunkName: 'AboutPage' */'./client/components/pages/AboutPage/AboutPage'),
@@ -51,7 +40,16 @@ const routes = [
   {
     path: '/charts',
     exact: true,
-    component: ChartsPage
+    component: Loadable({
+      loader: () => report(
+        System.import(/* webpackChunkName: 'ChartsPage' */'./client/components/pages/ChartsPage/ChartsPage'),
+        {
+          serverSideRequirePath: path.resolve(__dirname, './client/components/pages/ChartsPage/ChartsPage'),
+          webpackRequireWeakId: () => require.resolveWeak('./client/components/pages/ChartsPage/ChartsPage')
+        }
+      ),
+      loading: <div>Loading...</div>
+    })
   },
   {
     path: '/404',

@@ -19,6 +19,7 @@ renderRoutes()
     console.log(chalk.red('ALARM! Something went wrong!'));
     console.log(chalk.red('See below for details:'));
     console.log(chalk.red(err));
+    process.exit(1);
   });
 
 async function renderRoutes() {

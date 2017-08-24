@@ -21,7 +21,7 @@ const prebootOptions = {
 const inlinePrebootCode = getInlineCode(prebootOptions);
 
 export const initSSRServer = (app) => {
-  app.use((req, res) => {
+  app.use(async (req, res) => {
     const branch = matchRoutes(routes, req.url);
 
     if (branch[0].redirectTo) {
@@ -37,16 +37,21 @@ export const initSSRServer = (app) => {
       webpackIsomorphicTools.refresh();
     }
 
-    _resetGlobalChartsRenderQueue();
-
     if (pageComponent && pageComponent.fetchData) {
-      pageComponent.fetchData()
-        .then((data) => {
-          _renderAndSendPage(req, res, pageComponent, data);
-        });
+      try {
+        let data = await pageComponent.fetchData();
+        res.send(
+          await _renderPage(req.url, pageComponent, data)
+        );
+      }
+      catch (err) {
+        console.error(err);
+      }
     }
     else {
-      _renderAndSendPage(req, res, pageComponent);
+      res.send(
+        await _renderPage(req.url, pageComponent)
+      );
     }
   });
 };
@@ -63,48 +68,45 @@ function _resetGlobalChartsRenderQueue() {
 }
 
 // todo: use https://github.com/audreyt/node-webworker-threads
-function _renderAndSendPage(req, res, pageComponent, data) {
+export async function _renderPage(url, pageComponent, data) {
   const context = {};
-
   let lazyImports = [];
+
+  _resetGlobalChartsRenderQueue();
 
   // setup a watcher
   let stopInspecting = inspect(metadata => { // necessary for react-loadable components
     lazyImports.push(metadata);
   });
 
-  renderToString(
-    <Html
-      assets={webpackIsomorphicTools.assets()}
-      initialPageProps={data}
-      component={
-        __DISABLE_SSR__ ? null :
-          <StaticRouter context={context} location={req.url}>
-            <App>
-              {
-                React.createElement(pageComponent, {serverData: data})
-              }
-            </App>
-          </StaticRouter>
-      }
-    />
-  )
-    .then(({html}) => {
-      if (context.url) {
-        _redirectTo(res, context.url);
-        return;
-      }
+  try {
+    let {html} = await renderToString(
+      <Html
+        assets={webpackIsomorphicTools.assets()}
+        initialPageProps={data}
+        component={
+          __DISABLE_SSR__ ? null :
+            <StaticRouter context={context} location={url}>
+              <App>
+                {
+                  React.createElement(pageComponent, {serverData: data})
+                }
+              </App>
+            </StaticRouter>
+        }
+      />
+    );
 
-      stopInspecting(); // necessary for react-loadable components
-      html = _addLazyModules(html, req.url, lazyImports);
-      html = _addPrebootInlineCode(html);
+    stopInspecting(); // necessary for react-loadable components
+    html = _addLazyModules(html, url, lazyImports);
+    html = _addPrebootInlineCode(html);
+    html = await _renderCharts(html);
 
-      _renderCharts(html) // todo: use NodeJS 8 with async await
-        .then((html) => {
-          res.send('<!doctype html>\n' + html);
-        });
-    })
-    .catch(err => console.error(err));
+    return `<!doctype html>${html}`;
+  }
+  catch (err) {
+    console.error(err);
+  }
 }
 
 function _addLazyModules(html, requestUrl, lazyImports) {

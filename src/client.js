@@ -4,10 +4,10 @@
 import 'babel-polyfill';
 import 'preboot';
 import React from 'react';
+import {Switch, Route} from 'react-router';
 import {render} from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
-import {renderRoutes} from 'react-router-config';
-import routes from './routes';
+import rootRoutes from './routes';
 import App from './client/components/App';
 
 let dest;
@@ -18,7 +18,7 @@ if (__CLIENT__) {
 
 const Client = (
   <App>
-    {renderRoutes(routes)}
+    {_renderRoutes(rootRoutes)}
   </App>
 );
 
@@ -42,4 +42,35 @@ if (process.env.NODE_ENV !== 'production') {
   ) {
     console.error('Server-side React render was discarded. Make sure that your initial render does not contain any client-side code.');
   }
+}
+
+function _renderRoutes(routes) {
+  return (
+    routes
+      ?
+      <Switch>
+        {routes.map((route, i) => {
+          let childComponents = _renderRoutes(route.routes);
+
+          if (childComponents) {
+            childComponents = (
+              <route.component>
+                {childComponents}
+              </route.component>
+            );
+          }
+          return (
+            <Route
+              key={route.key || i}
+              path={route.path}
+              exact={route.exact}
+              strict={route.strict}
+              component={childComponents ? null : route.component}>
+              {childComponents}
+            </Route>
+          );
+        })}
+      </Switch>
+      : null
+  );
 }

@@ -2,7 +2,7 @@ import shell from 'shelljs';
 import path from 'path';
 import chalk from 'chalk';
 import routes from '../src/routes';
-import {_renderPage} from '../src/server/ssr.server';
+import {renderPage} from '../src/server/ssr.server';
 
 const SOURCE_FOLDER = 'static';
 const TARGET_FOLDER = 'static-build';
@@ -39,7 +39,7 @@ async function renderRoutes() {
       shell.cd(path.resolve(__dirname, filePath));
     }
 
-    const html = await _renderPage(route.path, route.component);
+    const html = await renderPage(route.path, route.component);
     shell.touch(fileName);
     shell.echo(html).to(fileName);
     if (filePath !== '/') {

@@ -6,6 +6,9 @@ import path from 'path';
 
 import HomePage from './client/components/pages/HomePage';
 import NotFoundPage from './client/components/pages/NotFoundPage';
+import WizardShellPage from './client/components/pages/WizardShellPage';
+import Page1 from './client/components/pages/WizardShellPage/pages/Page1';
+import Page2 from './client/components/pages/WizardShellPage/pages/Page2';
 
 
 // taken from https://github.com/webpack/webpack/issues/2461
@@ -50,6 +53,22 @@ const routes = [
       ),
       loading: <div>Loading...</div>
     })
+  },
+  {
+    path: '/wizard',
+    component: WizardShellPage,
+    routes: [
+      {
+        path: '/wizard/page1',
+        component: Page1,
+        exact: true
+      },
+      {
+        path: '/wizard/page2',
+        component: Page2,
+        exact: true
+      }
+    ]
   },
   {
     path: '/404',

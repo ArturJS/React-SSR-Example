@@ -8,6 +8,7 @@ import {getInlineCode} from 'preboot';
 import {matchRoutes} from 'react-router-config';
 import routes from './../routes';
 import {JSDOM} from 'jsdom';
+import _ from 'lodash';
 
 const prebootOptions = {
   appRoot: 'body',
@@ -21,15 +22,30 @@ const prebootOptions = {
 const inlinePrebootCode = getInlineCode(prebootOptions);
 
 export const initSSRServer = (app) => {
-  app.use(async (req, res) => {
+  app.use(async(req, res) => {
     const branch = matchRoutes(routes, req.url);
+    const lastMatchedRoute = _.last(branch);
 
-    if (branch[0].redirectTo) {
-      _redirectTo(res, branch[0].redirectTo);
-      return;
+    if (__SERVER__ && lastMatchedRoute.redirectTo) {
+      _redirectTo(res, lastMatchedRoute.redirectTo);
+      return false;
     }
 
-    const pageComponent = branch[0].route.component;
+    const {fetchData} = branch[0].route.component;
+    let serverData;
+
+    if (fetchData) {
+      try {
+        serverData = await fetchData();
+      }
+      catch (err) {
+        console.error(err);
+      }
+    }
+
+    const pageComponent = _.reduceRight(branch, (componentPyramid, {route}) => (
+      React.createElement(route.component, {children: componentPyramid, serverData})
+    ), null); // collect components from the inside out of matched routes;
 
     if (__DEVELOPMENT__) {
       // Do not cache webpack stats: the script file would change since
@@ -37,38 +53,14 @@ export const initSSRServer = (app) => {
       webpackIsomorphicTools.refresh();
     }
 
-    if (pageComponent && pageComponent.fetchData) {
-      try {
-        let data = await pageComponent.fetchData();
-        res.send(
-          await _renderPage(req.url, pageComponent, data)
-        );
-      }
-      catch (err) {
-        console.error(err);
-      }
-    }
-    else {
-      res.send(
-        await _renderPage(req.url, pageComponent)
-      );
-    }
+    res.send(
+      await renderPage(req.url, pageComponent, serverData)
+    );
   });
 };
 
-
-// private methods
-
-const lazyModulesCache = {};
-
-function _resetGlobalChartsRenderQueue() {
-  global.chartsRenderQueue = {
-    barChartQueue: []
-  };
-}
-
 // todo: use https://github.com/audreyt/node-webworker-threads
-export async function _renderPage(url, pageComponent, data) {
+export async function renderPage(url, pageComponent, serverData) {
   const context = {};
   let lazyImports = [];
 
@@ -83,14 +75,12 @@ export async function _renderPage(url, pageComponent, data) {
     let {html} = await renderToString(
       <Html
         assets={webpackIsomorphicTools.assets()}
-        initialPageProps={data}
+        initialPageProps={serverData}
         component={
           __DISABLE_SSR__ ? null :
             <StaticRouter context={context} location={url}>
               <App>
-                {
-                  React.createElement(pageComponent, {serverData: data})
-                }
+                {pageComponent}
               </App>
             </StaticRouter>
         }
@@ -107,6 +97,17 @@ export async function _renderPage(url, pageComponent, data) {
   catch (err) {
     console.error(err);
   }
+}
+
+
+// private methods
+
+const lazyModulesCache = {};
+
+function _resetGlobalChartsRenderQueue() {
+  global.chartsRenderQueue = {
+    barChartQueue: []
+  };
 }
 
 function _addLazyModules(html, requestUrl, lazyImports) {

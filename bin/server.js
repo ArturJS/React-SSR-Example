@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-require('../server.babel'); // babel registration (runtime transpilation for node)
+require('../register.babel'); // babel registration (runtime transpilation for node)
 const path = require('path');
 const rootDir = path.resolve(__dirname, '..');
 /**

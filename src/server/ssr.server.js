@@ -43,9 +43,7 @@ export const initSSRServer = (app) => {
       }
     }
 
-    const pageComponent = _.reduceRight(branch, (componentPyramid, {route}) => (
-      React.createElement(route.component, {children: componentPyramid, serverData})
-    ), null); // collect components from the inside out of matched routes;
+    const pageComponent = getPageComponentFromMatchedRoutes(branch, serverData);
 
     if (__DEVELOPMENT__) {
       // Do not cache webpack stats: the script file would change since
@@ -97,6 +95,12 @@ export async function renderPage(url, pageComponent, serverData) {
   catch (err) {
     console.error(err);
   }
+}
+
+export function getPageComponentFromMatchedRoutes(branch, serverData) {
+  return _.reduceRight(branch, (componentPyramid, {route}) => (
+    React.createElement(route.component, {children: componentPyramid, serverData})
+  ), null); // collect components from the inside out of matched routes;
 }
 
 

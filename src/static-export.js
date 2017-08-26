@@ -1,11 +1,16 @@
 import shell from 'shelljs';
 import path from 'path';
 import chalk from 'chalk';
+import {matchRoutes} from 'react-router-config';
 import routes from '../src/routes';
-import {renderPage} from '../src/server/ssr.server';
+import {
+  renderPage,
+  getPageComponentFromMatchedRoutes
+} from '../src/server/ssr.server';
 
 const SOURCE_FOLDER = 'static';
 const TARGET_FOLDER = 'static-build';
+const PATH_TO_TARGET_FOLDER = path.resolve(__dirname, `../${TARGET_FOLDER}`);
 
 shell.rm('-rf', TARGET_FOLDER);
 shell.cp('-Rf', SOURCE_FOLDER, TARGET_FOLDER);
@@ -23,27 +28,54 @@ renderRoutes()
   });
 
 async function renderRoutes() {
-  let exactRoutes = routes.filter(route => route.exact);
-  shell.cd(path.resolve(__dirname, `../${TARGET_FOLDER}`));
+  let exactRoutes = _getFlattenListOfRoutes(routes).filter(route => route.exact);
 
   for (let route of exactRoutes) {
-    let [, fileName] = /\/([^/]*)$/.exec(route.path) || [, ''];
-    let [, filePath] = /^\/?(.*\/)/.exec(route.path) || [, ''];
-    if (fileName === '') {
-      fileName = 'index';
-    }
-    fileName += '.html';
+    const branch = matchRoutes(routes, route.path);
+    const pageComponent = getPageComponentFromMatchedRoutes(branch);
+    const html = await renderPage(route.path, pageComponent);
+    _restoreShellExecutionPath();
+    _createFoldersAndHtmlByUrl(route.path, html);
+  }
+}
 
-    if (filePath !== '/') {
-      shell.mkdir('-p', filePath);
-      shell.cd(path.resolve(__dirname, filePath));
-    }
+// private methods
 
-    const html = await renderPage(route.path, route.component);
-    shell.touch(fileName);
-    shell.echo(html).to(fileName);
-    if (filePath !== '/') {
-      shell.cd(filePath.replace(/([^/]+)/g, '..'));
+function _getFlattenListOfRoutes(routes) {
+  _getFlattenListOfRoutesImpl._flattenListOfRoutes = [];
+  _getFlattenListOfRoutesImpl(routes);
+
+  const {_flattenListOfRoutes} = _getFlattenListOfRoutesImpl;
+  _getFlattenListOfRoutesImpl._flattenListOfRoutes = [];
+  return _flattenListOfRoutes;
+}
+
+function _getFlattenListOfRoutesImpl(routes) {
+  for (let route of routes) {
+    _getFlattenListOfRoutesImpl._flattenListOfRoutes.push(route);
+    if (route.routes) {
+      _getFlattenListOfRoutesImpl(route.routes);
     }
   }
+}
+
+function _restoreShellExecutionPath() {
+  shell.cd(PATH_TO_TARGET_FOLDER);
+}
+
+function _createFoldersAndHtmlByUrl(url, html) {
+  let [, fileName] = /\/([^/]*)$/.exec(url) || [, ''];
+  let [, filePath] = /^\/?(.*\/)/.exec(url) || [, ''];
+  if (fileName === '') {
+    fileName = 'index';
+  }
+  fileName += '.html';
+
+  if (filePath !== '/') {
+    filePath = path.resolve(PATH_TO_TARGET_FOLDER, filePath);
+    shell.mkdir('-p', filePath);
+    shell.cd(filePath);
+  }
+  shell.touch(fileName);
+  shell.echo(html).to(fileName);
 }

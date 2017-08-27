@@ -20,16 +20,18 @@
 }
 
 .nav-bar {
+  display: flex;
   height: 40px;
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
 }
 
-.nav-link {
+.nav-link,
+.nav-dropdown-title {
   display: inline-flex;
   line-height: 40px;
-  height: 100%;
+  height: 40px;
   padding: 0 15px;
   cursor: pointer;
   text-decoration: none;
@@ -43,14 +45,33 @@
     text-decoration: none;
   }
 
-  &:hover {
-    background-color: rgba(0,0,0,.2);
-    border-bottom-width: 4px;
-  }
-
+  &:hover,
   &.selected {
     background-color: rgba(0,0,0,.2);
     border-bottom-width: 4px;
+  }
+}
+
+.nav-dropdown {
+  display: inline-flex;
+  position: relative;
+
+  &:hover,
+  &:focus {
+    .nav-dropdown-menu {
+      display: block;
+    }
+  }
+
+  .nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .nav-link {
+    width: 100%;
   }
 }
 

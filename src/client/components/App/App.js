@@ -25,26 +25,53 @@ export default class App extends Component {
               to="/"
               exact
               className="nav-link"
-              activeClassName="selected">
+              activeClassName="selected"
+              tabIndex="0">
               Home
             </NavLink>
             <NavLink
               to="/charts"
               exact
               className="nav-link"
-              activeClassName="selected">
+              activeClassName="selected"
+              tabIndex="0">
               Charts
             </NavLink>
+            <div
+              className="nav-dropdown"
+              tabIndex="0">
+              <div className="nav-dropdown-title">
+                Wizard
+              </div>
+              <div className="nav-dropdown-menu">
+                <NavLink
+                  to="/wizard/page1"
+                  exact
+                  className="nav-link"
+                  activeClassName="selected">
+                  Page1
+                </NavLink>
+                <NavLink
+                  to="/wizard/page2"
+                  exact
+                  className="nav-link"
+                  activeClassName="selected">
+                  Page2
+                </NavLink>
+              </div>
+            </div>
             <NavLink
               to="/about"
               className="nav-link"
-              activeClassName="selected">
+              activeClassName="selected"
+              tabIndex="0">
               About
             </NavLink>
             <NavLink
               to="/404"
               className="nav-link"
-              activeClassName="selected">
+              activeClassName="selected"
+              tabIndex="0">
               404
             </NavLink>
           </div>
@@ -54,7 +81,9 @@ export default class App extends Component {
         </div>
         <div className="footer">
           Have questions? Ask for help
+          &nbsp;
           <a
+            rel="noopener"
             href="https://github.com/ArturJS/React-SSR-MiniQ/issues"
             target="_blank">
             on Github

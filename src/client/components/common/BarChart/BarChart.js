@@ -25,7 +25,6 @@ export const initBarChart = ({svgElement, height, data}) => {
 
   if (__SERVER__) {
     saveDatum(svgElement.node());
-    svgElement.attr('id', null);
   }
 };
 
@@ -190,30 +189,20 @@ export default class BarChart extends Component {
     else if (__CLIENT__ && document.getElementById(this.componentId)) {
       // this.svgRootEl - necessary to avoid discarding of server side html markup by React on client side
       this.svgRootEl = d3.select(document.getElementById(this.componentId));
-      initBarChart({
-        svgElement: this.svgRootEl,
-        height,
-        data
-      });
-      this.isInitialized = true;
     }
   }
 
   componentDidMount() {
-    if (!this.isInitialized) {
-      let {
-        height,
-        data
-      } = this.props;
+    let {
+      height,
+      data
+    } = this.props;
 
-      initBarChart({
-        svgElement: this.svgElement,
-        height,
-        data
-      });
-    }
-
-    this.svgRootEl = null;
+    initBarChart({
+      svgElement: this.svgRootEl,
+      height,
+      data
+    });
   }
 
   componentDidUpdate() {
@@ -223,13 +212,12 @@ export default class BarChart extends Component {
     } = this.props;
 
     updateBarChart({
-      svgElement: this.svgElement,
+      svgElement: this.svgRootEl,
       height,
       data
     });
   }
 
-  isInitialized = false;
   svgRootEl = null;
   defaultStyles = {
     overflow: 'visible'
@@ -244,26 +232,15 @@ export default class BarChart extends Component {
     } = this.props;
 
     return (
-      this.svgRootEl
-        ?
-        <svg
-          id={this.componentId}
-          style={this.defaultStyles}
-          className={classNames('bar-chart', {[className]: !!className})}
-          ref={node => this.svgElement = d3.select(node)}
-          width={width}
-          height={height}
-          dangerouslySetInnerHTML={{__html: this.svgRootEl && this.svgRootEl.html()}}
-        />
-        :
-        <svg
-          id={this.componentId}
-          style={this.defaultStyles}
-          className={classNames('bar-chart', {[className]: !!className})}
-          ref={node => this.svgElement = d3.select(node)}
-          width={width}
-          height={height}
-        />
+      <svg
+        id={this.componentId}
+        style={this.defaultStyles}
+        className={classNames('bar-chart', {[className]: !!className})}
+        ref={node => this.svgRootEl = d3.select(node)}
+        width={width}
+        height={height}
+        dangerouslySetInnerHTML={{__html: this.svgRootEl && this.svgRootEl.html()}}
+      />
     );
   }
 }

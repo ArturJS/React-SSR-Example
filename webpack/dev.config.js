@@ -34,8 +34,8 @@ module.exports = {
   },
   output: {
     path: assetsPath,
-    filename: '[name]-[hash].js',
-    chunkFilename: '[name]-[chunkhash].js',
+    filename: '[name].js',
+    chunkFilename: '[name]-chunk.js',
     publicPath: 'http://' + host + ':' + port + '/dist/'
   },
   module: {

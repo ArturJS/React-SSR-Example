@@ -2,6 +2,7 @@
 node_modules/
 dist/
 static-build/
+coverage/
 *.iml
 webpack-assets.json
 webpack-stats.json

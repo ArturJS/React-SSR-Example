@@ -34,9 +34,29 @@
     "start-dev-api": "better-npm-run start-dev-api",
     "watch-client": "better-npm-run watch-client",
     "dev": "concurrent --kill-others \"npm run watch-client\" \"npm run start-dev\" \"npm run start-dev-api\"",
-    "test": "karma start",
+    "test": "jest --env=jsdom",
+    "test:coverage": "jest --env=jsdom --coverage",
     "test-node": "./node_modules/mocha/bin/mocha $(find api -name '*-test.js') --compilers js:babel-core/register",
     "test-node-watch": "./node_modules/mocha/bin/mocha $(find api -name '*-test.js') --compilers js:babel-core/register --watch"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/**/*.test.{js,jsx}",
+      "!src/**/*index.{js,jsx}"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>[/\\\\](build|docs|node_modules|scripts)[/\\\\]"
+    ],
+    "testEnvironment": "node",
+    "testURL": "http://localhost",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(jsx?)$",
+    "transform": {
+      "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ]
   },
   "betterScripts": {
     "start-prod": {
@@ -147,11 +167,13 @@
     "clean-webpack-plugin": "^0.1.6",
     "concurrently": "^0.1.1",
     "css-loader": "^0.23.1",
+    "enzyme": "2.9.1",
     "eslint": "4.4.0",
     "eslint-loader": "^1.0.0",
     "eslint-plugin-import": "^0.8.0",
     "eslint-plugin-react": "4.0.0",
     "extract-text-webpack-plugin": "2.1.0",
+    "jest": "20.0.4",
     "karma": "^0.13.10",
     "karma-cli": "^0.1.1",
     "karma-mocha": "^0.2.0",
@@ -169,6 +191,7 @@
     "prop-types": "15.5.10",
     "react-addons-test-utils": "0.14.8",
     "react-hot-loader": "1.3.1",
+    "react-test-renderer": "15.6.1",
     "react-transform-catch-errors": "^1.0.0",
     "redbox-react": "1.4.3",
     "sass-loader": "^3.1.2",

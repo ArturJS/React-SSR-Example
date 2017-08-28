@@ -12,10 +12,6 @@ import App from './client/components/App';
 
 let dest;
 
-if (__CLIENT__) {
-  dest = global.document.getElementById('content');
-}
-
 const Client = (
   <App>
     {_renderRoutes(rootRoutes)}
@@ -23,6 +19,7 @@ const Client = (
 );
 
 if (__CLIENT__) {
+  dest = document.getElementById('content');
   render(
     <BrowserRouter>
       {Client}

@@ -205,17 +205,21 @@ export default class BarChart extends Component {
     });
   }
 
-  componentDidUpdate() {
+  componentWillReceiveProps(nextProps) {
     let {
       height,
       data
-    } = this.props;
+    } = nextProps;
 
     updateBarChart({
       svgElement: this.svgRootEl,
       height,
       data
     });
+  }
+
+  shouldComponentUpdate() {
+    return false;
   }
 
   svgRootEl = null;

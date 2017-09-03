@@ -30,7 +30,8 @@ module.exports = {
     main: [
       'webpack-hot-middleware/client?path=http://' + host + ':' + port + '/__webpack_hmr',
       './src/client.js'
-    ]
+    ],
+    prebootInit: './src/client/prebootInit.js'
   },
   output: {
     path: assetsPath,
@@ -50,7 +51,7 @@ module.exports = {
       },
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        exclude: /node_modules|prebootInit/,
         use: [
           {
             loader: 'react-hot-loader'
@@ -102,10 +103,14 @@ module.exports = {
           module.context.indexOf('node_modules') !== -1;
       }
     }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'prebootInit',
+    //   filename: '[name].js'
+    // }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'preboot',
       minChunks: function (module) {
-        return module.context && module.context.indexOf('preboot') !== -1;
+        return module.context && /preboot(?!(Init))/.test(module.context); // add 'preboot' and NOT 'prebootInit'
       }
     }),
     //CommonChunksPlugin will now extract all the common modules from vendor and main bundles

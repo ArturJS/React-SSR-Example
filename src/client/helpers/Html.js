@@ -48,6 +48,7 @@ export default class Html extends Component {
           {/* ideally one could also include here the style for the current page (Home.scss, About.scss, etc) */}
           <script src={assets.javascript.manifest} charSet="UTF-8"/>
           <script src={assets.javascript.preboot} charSet="UTF-8"/>
+          <script src={assets.javascript.prebootInit} charSet="UTF-8"/>
         </head>
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: content}}/>

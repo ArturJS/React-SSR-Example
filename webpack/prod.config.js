@@ -20,7 +20,8 @@ module.exports = {
   entry: {
     main: [
       './src/client.js'
-    ]
+    ],
+    prebootInit: './src/client/prebootInit.js'
   },
   output: {
     path: assetsPath,

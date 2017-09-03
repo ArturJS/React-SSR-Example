@@ -4,22 +4,10 @@ import {StaticRouter} from 'react-router';
 import {inspect} from 'import-inspector';
 import Html from '../client/helpers/Html';
 import App from '../client/components/App';
-import {getInlineCode} from 'preboot';
 import {matchRoutes} from 'react-router-config';
 import routes from './../routes';
 import {JSDOM} from 'jsdom';
 import _ from 'lodash';
-
-const prebootOptions = {
-  appRoot: 'body',
-  freeze: false,
-  focus: true,
-  buffer: true,
-  keyPress: true,
-  buttonPress: true
-};
-
-const inlinePrebootCode = getInlineCode(prebootOptions);
 
 export const initSSRServer = (app) => {
   app.use(async(req, res) => {
@@ -87,7 +75,6 @@ export async function renderPage(url, pageComponent, serverData) {
 
     stopInspecting(); // necessary for react-loadable components
     html = _addLazyModules(html, url, lazyImports);
-    html = _addPrebootInlineCode(html);
     html = await _renderCharts(html);
 
     return `<!doctype html>${html}`;
@@ -143,10 +130,6 @@ function _redirectTo(res, redirectUrl) {
     Location: redirectUrl
   });
   res.end();
-}
-
-function _addPrebootInlineCode(html) {
-  return html.replace('</head>', '<script>' + inlinePrebootCode + '</script></head>');
 }
 
 function _renderCharts(html) {

@@ -8,3 +8,4 @@ webpack-assets.json
 webpack-stats.json
 npm-debug.log
 *.swp
+/src/client/prebootInit.js

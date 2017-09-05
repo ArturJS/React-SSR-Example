@@ -9,6 +9,7 @@ import {render} from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
 import rootRoutes from './routes';
 import App from './client/components/App';
+import './client/helpers/register-service-worker';
 
 let dest;
 

@@ -9,11 +9,29 @@ var WebpackChunkHash = require('webpack-chunk-hash');
 var strip = require('strip-loader');
 
 var projectRootPath = path.resolve(__dirname, '../');
-var assetsPath = path.resolve(projectRootPath, './static/dist');
+var assetsPath = path.resolve(projectRootPath, './static');
 
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
+
+var SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+const config = require('../src/config');
+// sw-precache-webpack-plugin configurations
+
+const SW_PRECACHE_CONFIG = {
+  filename: 'service-worker.js',
+  staticFileGlobs: [
+    'static/**/*.{js,html,css,png,jpg,gif,svg,eot,ttf,woff,woff2}'
+  ],
+  stripPrefix: 'static',
+  runtimeCaching: [{
+    urlPattern: /\//,
+    handler: 'networkFirst'
+  }],
+  minify: true,
+  verbose: true
+};
 
 module.exports = {
   context: path.resolve(__dirname, '..'),
@@ -27,7 +45,7 @@ module.exports = {
     path: assetsPath,
     filename: '[name]-[chunkhash].js',
     chunkFilename: '[name]-[chunkhash].js',
-    publicPath: '/dist/',
+    publicPath: '/',
   },
   module: {
     loaders: [
@@ -39,8 +57,8 @@ module.exports = {
           replace: 'window.preboot = prebootClient();'
         }
       },
-      { test: /\.jsx?$/, exclude: /node_modules/, loaders: [strip.loader('debug'), 'babel-loader']},
-      { test: /\.json$/, loader: 'json-loader' },
+      {test: /\.jsx?$/, exclude: /node_modules/, loaders: [strip.loader('debug'), 'babel-loader']},
+      {test: /\.json$/, loader: 'json-loader'},
       {
         test: /\.scss$/,
         loader: ExtractTextPlugin.extract({
@@ -48,12 +66,12 @@ module.exports = {
           use: 'css-loader?importLoaders=2&minimize=true!postcss-loader?parser=postcss-scss!sass-loader?outputStyle=expanded'
         })
       },
-      { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
-      { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
-      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" },
-      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader" },
-      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=image/svg+xml" },
-      { test: webpackIsomorphicToolsPlugin.regular_expression('images'), loader: 'url-loader?limit=10240' }
+      {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff"},
+      {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff"},
+      {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream"},
+      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader"},
+      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=image/svg+xml"},
+      {test: webpackIsomorphicToolsPlugin.regular_expression('images'), loader: 'url-loader?limit=10240'}
     ]
   },
   resolve: {
@@ -64,7 +82,7 @@ module.exports = {
     extensions: ['.json', '.js', '.jsx']
   },
   plugins: [
-    new CleanPlugin([assetsPath], { root: projectRootPath }),
+    new CleanPlugin([assetsPath], {root: projectRootPath}),
 
     // css files from the extract-text-plugin loader
     new ExtractTextPlugin({filename: '[name]-[chunkhash].css', allChunks: true}),
@@ -81,6 +99,8 @@ module.exports = {
 
     // ignore dev config
     new webpack.IgnorePlugin(/\.\/dev/, /\/config$/),
+
+    new SWPrecacheWebpackPlugin(SW_PRECACHE_CONFIG),
 
     // optimizations
     new webpack.optimize.UglifyJsPlugin({

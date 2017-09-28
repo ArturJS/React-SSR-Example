@@ -36,6 +36,7 @@ export default class Html extends Component {
 
           <link rel="shortcut icon" href="/favicon.ico" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8"/>
           {Object.values(assets.javascript).map((assetPath) =>
             <link href={assetPath} rel="preload" as="script" charSet="UTF-8"/>
           )}

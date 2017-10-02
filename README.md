@@ -1,11 +1,7 @@
-# React MobX Universal Hot Example
+# React SSR Example
 
-[![build status](https://img.shields.io/travis/erikras/react-redux-universal-hot-example/master.svg?style=flat-square)](https://travis-ci.org/erikras/react-redux-universal-hot-example)
-[![Dependency Status](https://david-dm.org/erikras/react-redux-universal-hot-example.svg?style=flat-square)](https://david-dm.org/erikras/react-redux-universal-hot-example)
-[![devDependency Status](https://david-dm.org/erikras/react-redux-universal-hot-example/dev-status.svg?style=flat-square)](https://david-dm.org/erikras/react-redux-universal-hot-example#info=devDependencies)
-[![react-redux-universal channel on discord](https://img.shields.io/badge/discord-react--redux--universal%40reactiflux-brightgreen.svg?style=flat-square)](https://discord.gg/0ZcbPKXt5bZZb1Ko)
-[![Demo on Heroku](https://img.shields.io/badge/demo-heroku-brightgreen.svg?style=flat-square)](https://react-redux.herokuapp.com)
-[![PayPal donate button](https://img.shields.io/badge/donate-paypal-brightgreen.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E2LK57ZQ9YRMN)
+
+(originally based on https://github.com/erikras/react-redux-universal-hot-example)
 
 ---
 
@@ -13,7 +9,7 @@
 
 This is a starter boilerplate app I've put together using the following technologies:
 
-* ~~Isomorphic~~ [Universal](https://medium.com/@mjackson/universal-javascript-4761051b7ae9) rendering
+* Isomorphic rendering
 * Both client and server make calls to load data from separate API server
 * [React](https://github.com/facebook/react)
 * [React Router v4](https://github.com/ReactTraining/react-router)
@@ -27,6 +23,28 @@ This is a starter boilerplate app I've put together using the following technolo
 * [react-helmet](https://github.com/nfl/react-helmet) to manage title and meta tag information on both server and client
 * [webpack-isomorphic-tools](https://github.com/halt-hammerzeit/webpack-isomorphic-tools) to allow require() work for statics both on client and server
 * [mocha](https://mochajs.org/) to allow writing unit tests for the project.
+
+## What are the main differences between this starter-kit and [React Redux Universal Hot Example](https://github.com/erikras/react-redux-universal-hot-example)?
+
+### The main distinctive features are:
+
+1. Isomorphic data fetching based on 
+[react-router-config](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config).
+
+2. Automated code splitting and lazy loading capability powered by [Webpack](https://github.com/webpack/webpack) 
+and [react-loadable](https://github.com/thejameskyle/react-loadable).
+
+3. Static html export with a simple command `npm run static-build`.
+
+4. Server-side rendering for D3.js bar chart via [JSDOM](https://github.com/tmpvar/jsdom).
+(for details see also 
+[BarChart.js](https://github.com/ArturJS/React-SSR-Example/blob/master/src/client/components/common/BarChart/BarChart.js)
+and [ssr.server.js](https://github.com/ArturJS/React-SSR-Example/blob/master/src/server/ssr.server.js))
+
+5. [Preboot.js](https://github.com/angular/preboot) 
+for recording and playing back events which were happening 
+during the loading of the main scripts 
+(when the main application was not bootstrapped).
 
 ## Installation
 
@@ -60,11 +78,42 @@ let logoImage = require('./logo.png');
 
 #### Unit Tests
 
-The project uses [Mocha](https://mochajs.org/) to run your unit tests, it uses [Karma](http://karma-runner.github.io/0.13/index.html) as the test runner, it enables the feature that you are able to render your tests to the browser (e.g: Firefox, Chrome etc.), which means you are able to use the [Test Utilities](http://facebook.github.io/react/docs/test-utils.html) from Facebook api like `renderIntoDocument()`.
+The project uses [Jest](https://facebook.github.io/jest/) as its test runner. 
 
-To run the tests in the project, just simply run `npm test` if you have `Chrome` installed, it will be automatically launched as a test service for you.
+Jest is a Node-based runner. This means that the tests always run in a Node environment and not in a real browser. This lets us enable fast iteration speed and prevent flakiness.
+            
+While Jest provides browser globals such as `window` thanks to [jsdom](https://github.com/tmpvar/jsdom), they are only approximations of the real browser behavior. Jest is intended to be used for unit tests of your logic and your components rather than the DOM quirks.
+            
+We recommend that you use a separate tool for browser end-to-end tests if you need them. They are beyond the scope of Create React App.
 
-To keep watching your test suites that you are working on, just set `singleRun: false` in the `karma.conf.js` file. Please be sure set it to `true` if you are running `npm test` on a continuous integration server (travis-ci, etc).
+### Filename Conventions
+
+Jest will look for test files with any of the following popular naming conventions:
+
+* Files with `.js` suffix in `__tests__` folders.
+* Files with `.test.js` suffix.
+* Files with `.spec.js` suffix.
+
+The `.test.js` / `.spec.js` files (or the `__tests__` folders) can be located at any depth under the `src` top level folder.
+
+We recommend to put the test files (or `__tests__` folders) next to the code they are testing so that relative imports appear shorter. For example, if `App.test.js` and `App.js` are in the same folder, the test just needs to `import App from './App'` instead of a long relative path. Colocation also helps find tests more quickly in larger projects.
+
+### Command Line Interface
+
+When you run `npm test`, Jest will launch in the watch mode. Every time you save a file, it will re-run the tests, just like `npm start` recompiles the code.
+
+The watcher includes an interactive command-line interface with the ability to run all tests, or focus on a search pattern. It is designed this way so that you can keep it open and enjoy fast re-runs. You can learn the commands from the “Watch Usage” note that the watcher prints after every run:
+
+![Jest watch mode](http://facebook.github.io/jest/img/blog/15-watch.gif)
+
+
+## TODO
+* Add offline capability with [sw-precache](https://github.com/GoogleChromeLabs/sw-precache) 
+and proper invalidating of obsolete cache.
+* Create webpack plugin for assets generation in runtime. 
+Akin to [generate-asset-webpack-plugin](https://github.com/kjbekkelund/generate-asset-webpack-plugin)
+but with adding to webpack stats object.
+(necessary for runtime generated preboot.js bootstrap script)
 
 ## Deployment on Heroku
 

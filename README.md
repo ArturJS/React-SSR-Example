@@ -22,7 +22,7 @@ This is a starter boilerplate app I've put together using the following technolo
 * [style-loader](https://github.com/webpack/style-loader), [sass-loader](https://github.com/jtangelder/sass-loader) to allow import of stylesheets in plain css and sass,
 * [react-helmet](https://github.com/nfl/react-helmet) to manage title and meta tag information on both server and client
 * [webpack-isomorphic-tools](https://github.com/halt-hammerzeit/webpack-isomorphic-tools) to allow require() work for statics both on client and server
-* [mocha](https://mochajs.org/) to allow writing unit tests for the project.
+* [Jest](https://facebook.github.io/jest/) to allow writing unit tests for the project.
 
 ## What are the main differences between this starter-kit and [React Redux Universal Hot Example](https://github.com/erikras/react-redux-universal-hot-example)?
 

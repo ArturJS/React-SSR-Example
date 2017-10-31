@@ -82,7 +82,10 @@ module.exports = {
     extensions: ['.json', '.js', '.jsx']
   },
   plugins: [
-    new CleanPlugin([assetsPath], {root: projectRootPath}),
+    new CleanPlugin([assetsPath], {
+      root: projectRootPath,
+      exclude: ['favicon.ico'],
+    }),
 
     // css files from the extract-text-plugin loader
     new ExtractTextPlugin({filename: '[name]-[chunkhash].css', allChunks: true}),

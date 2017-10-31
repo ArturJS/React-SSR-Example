@@ -1,6 +1,7 @@
 .idea/
 node_modules/
-static/
+static/*
+!static/favicon.ico
 static-build/
 coverage/
 *.iml

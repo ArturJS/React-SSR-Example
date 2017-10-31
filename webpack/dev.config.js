@@ -54,7 +54,7 @@ module.exports = {
         exclude: /node_modules|prebootInit/,
         use: [
           {
-            loader: 'react-hot-loader'
+            loader: 'react-hot-loader/webpack'
           },
           {
             loader: 'babel-loader',
@@ -93,7 +93,7 @@ module.exports = {
       __CLIENT__: true,
       __SERVER__: false,
       __DEVELOPMENT__: true,
-      __DEVTOOLS__: true  // <-------- DISABLE redux-devtools HERE
+      __PRODUCTION__: false
     }),
     webpackIsomorphicToolsPlugin.development(),
     new webpack.optimize.CommonsChunkPlugin({

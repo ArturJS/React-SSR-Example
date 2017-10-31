@@ -114,7 +114,7 @@ function _addLazyModules(html, requestUrl, lazyImports) {
 
   const lazyScripts = lazyImports.map(lazyImport => {
     const lazyChunkPath = _getChunkPath(lazyImport.serverSideRequirePath);
-    return `<script src="${lazyChunkPath}" charset="UTF-8"><script/>`;
+    return `<script src="${lazyChunkPath}" charset="UTF-8"></script>`;
   });
 
   return html.replace('</head>', lazyScripts + '</head>');

@@ -5,8 +5,9 @@ import 'babel-polyfill';
 import 'preboot';
 import React from 'react';
 import {Switch, Route} from 'react-router';
-import {render} from 'react-dom';
+import {hydrate} from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
+
 import rootRoutes from './routes';
 import App from './client/components/App';
 import './client/helpers/register-service-worker';
@@ -21,7 +22,7 @@ const Client = (
 
 if (__CLIENT__) {
   dest = document.getElementById('content');
-  render(
+  hydrate(
     <BrowserRouter>
       {Client}
     </BrowserRouter>,
@@ -34,12 +35,6 @@ export default Client;
 
 if (process.env.NODE_ENV !== 'production') {
   global.React = React; // enable debugger
-
-  if (
-    !dest || !dest.firstChild || !dest.firstChild.attributes || !dest.firstChild.attributes['data-react-checksum']
-  ) {
-    console.error('Server-side React render was discarded. Make sure that your initial render does not contain any client-side code.');
-  }
 }
 
 function _renderRoutes(routes) {

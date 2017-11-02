@@ -10,7 +10,9 @@ import Html from '../client/helpers/Html';
 import App from '../client/components/App';
 import routes from './../routes';
 
-export const initSSRServer = (app) => {
+export const initSSRServer = async(app) => {
+  await Loadable.preloadAll(); // necessary to resolve paths to lazy imports on server side
+
   app.use(async(req, res) => {
     const branch = matchRoutes(routes, req.url);
     const lastMatchedRoute = _.last(branch);
@@ -68,10 +70,22 @@ function renderToNodeStreamPage({req, res, pageComponent, serverData}) {
 
   res.write('<!doctype html>');
 
-  const addLazyImportsStream = new AddLazyImportsStream({lazyModules});
+  const htmlChunksTransformStream = new HtmlChunksTransformStream({
+    transformers: [
+      (htmlChunk) => {
+        if (htmlChunk.indexOf('</body>') > -1) {
+          console.log('before htmlChunk ', htmlChunk);
+          console.log('lazyModules', lazyModules);
+          htmlChunk = _addLazyModules(htmlChunk, lazyModules);
+          console.log('after htmlChunk ', htmlChunk);
+        }
+        return htmlChunk;
+      }
+    ]
+  });
 
   renderStream
-    .pipe(addLazyImportsStream)
+    .pipe(htmlChunksTransformStream)
     .pipe(res, {end: false});
 
   renderStream.on('end', () => {
@@ -142,18 +156,22 @@ function _redirectTo(res, redirectUrl) {
   res.end();
 }
 
-class AddLazyImportsStream extends Transform {
-  constructor({lazyModules}) {
+class HtmlChunksTransformStream extends Transform {
+  constructor({transformers}) {
     super();
-    this.lazyModules = lazyModules;
+    this.transformers = transformers;
   }
 
   _transform(chunk, encoding, callback) {
-    let html = chunk.toString('utf8');
+    const htmlChunk = chunk.toString('utf8');
 
-    if (html.indexOf('</body>') > -1) {
-      html = _addLazyModules(html, this.lazyModules);
-      chunk = Buffer.from(html, 'utf8');
+    const transformedHtmlChunk = this.transformers.reduce(
+      (htmlBuffer, transformer) => transformer(htmlBuffer),
+      htmlChunk
+    );
+
+    if (transformedHtmlChunk !== htmlChunk) {
+      chunk = Buffer.from(transformedHtmlChunk, 'utf8');
     }
 
     this.push(chunk);

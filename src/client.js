@@ -21,13 +21,17 @@ const Client = (
 );
 
 if (__CLIENT__) {
-  Loadable.preloadReady().then(() => {
-    hydrate(
-      <BrowserRouter>
-        {Client}
-      </BrowserRouter>,
-      document.getElementById('content')
-    );
+  window.addEventListener('load', () => {
+    Loadable
+      .preloadReady()
+      .then(() => {
+        hydrate(
+          <BrowserRouter>
+            {Client}
+          </BrowserRouter>,
+          document.getElementById('content')
+        );
+      });
   });
 }
 

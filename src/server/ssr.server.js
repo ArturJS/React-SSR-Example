@@ -2,12 +2,13 @@ import React from 'react';
 import {StaticRouter} from 'react-router';
 import Loadable from 'react-loadable';
 import ReactDOMServer from 'react-dom/server';
+import {matchRoutes} from 'react-router-config';
+import _ from 'lodash';
+import {Transform} from 'stream';
 
 import Html from '../client/helpers/Html';
 import App from '../client/components/App';
-import {matchRoutes} from 'react-router-config';
 import routes from './../routes';
-import _ from 'lodash';
 
 export const initSSRServer = (app) => {
   app.use(async(req, res) => {
@@ -39,11 +40,44 @@ export const initSSRServer = (app) => {
       webpackIsomorphicTools.refresh();
     }
 
-    res.send(
-      await renderPage(req.url, pageComponent, serverData)
-    );
+    renderToNodeStreamPage({req, res, pageComponent, serverData});
   });
 };
+
+function renderToNodeStreamPage({req, res, pageComponent, serverData}) {
+  const context = {};
+  const lazyModules = [];
+  const {url} = req;
+
+  const renderStream = ReactDOMServer.renderToNodeStream(
+    <Html
+      assets={webpackIsomorphicTools.assets()}
+      initialPageProps={serverData}
+      component={
+        __DISABLE_SSR__ ? null :
+          <StaticRouter context={context} location={url}>
+            <Loadable.Capture report={moduleName => lazyModules.push(moduleName)}>
+              <App>
+                {pageComponent}
+              </App>
+            </Loadable.Capture>
+          </StaticRouter>
+      }
+    />
+  );
+
+  res.write('<!doctype html>');
+
+  const addLazyImportsStream = new AddLazyImportsStream({lazyModules});
+
+  renderStream
+    .pipe(addLazyImportsStream)
+    .pipe(res, {end: false});
+
+  renderStream.on('end', () => {
+    res.end();
+  });
+}
 
 
 export async function renderPage(url, pageComponent, serverData) {
@@ -77,6 +111,7 @@ export async function renderPage(url, pageComponent, serverData) {
   }
 }
 
+
 export function getPageComponentFromMatchedRoutes(branch, serverData) {
   return _.reduceRight(branch, (componentPyramid, {route}) => (
     React.createElement(route.component, {children: componentPyramid, serverData})
@@ -92,7 +127,7 @@ function _addLazyModules(html, lazyImports) {
     return `<script src="${lazyChunkPath}" charset="UTF-8"></script>`;
   });
 
-  return html.replace('</head>', lazyScripts + '</head>');
+  return html.replace('</body>', lazyScripts + '</body>');
 }
 
 function _getChunkPath(modulePath) {
@@ -105,4 +140,23 @@ function _redirectTo(res, redirectUrl) {
     Location: redirectUrl
   });
   res.end();
+}
+
+class AddLazyImportsStream extends Transform {
+  constructor({lazyModules}) {
+    super();
+    this.lazyModules = lazyModules;
+  }
+
+  _transform(chunk, encoding, callback) {
+    let html = chunk.toString('utf8');
+
+    if (html.indexOf('</body>') > -1) {
+      html = _addLazyModules(html, this.lazyModules);
+      chunk = Buffer.from(html, 'utf8');
+    }
+
+    this.push(chunk);
+    callback();
+  };
 }

@@ -7,12 +7,12 @@ import React from 'react';
 import {Switch, Route} from 'react-router';
 import {hydrate} from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
+import Loadable from 'react-loadable';
 
 import rootRoutes from './routes';
 import App from './client/components/App';
 import './client/helpers/register-service-worker';
 
-let dest;
 
 const Client = (
   <App>
@@ -21,13 +21,14 @@ const Client = (
 );
 
 if (__CLIENT__) {
-  dest = document.getElementById('content');
-  hydrate(
-    <BrowserRouter>
-      {Client}
-    </BrowserRouter>,
-    dest
-  );
+  Loadable.preloadReady().then(() => {
+    hydrate(
+      <BrowserRouter>
+        {Client}
+      </BrowserRouter>,
+      document.getElementById('content')
+    );
+  });
 }
 
 export default Client;
@@ -38,32 +39,31 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 function _renderRoutes(routes) {
-  return (
-    routes
-      ?
-      <Switch>
-        {routes.map((route, i) => {
-          let childComponents = _renderRoutes(route.routes);
+  if (!routes) return null;
 
-          if (childComponents) {
-            childComponents = (
-              <route.component>
-                {childComponents}
-              </route.component>
-            );
-          }
-          return (
-            <Route
-              key={route.key || i}
-              path={route.path}
-              exact={route.exact}
-              strict={route.strict}
-              component={childComponents ? null : route.component}>
+  return (
+    <Switch>
+      {routes.map((route, i) => {
+        let childComponents = _renderRoutes(route.routes);
+
+        if (childComponents) {
+          childComponents = (
+            <route.component>
               {childComponents}
-            </Route>
+            </route.component>
           );
-        })}
-      </Switch>
-      : null
+        }
+        return (
+          <Route
+            key={route.key || i}
+            path={route.path}
+            exact={route.exact}
+            strict={route.strict}
+            component={childComponents ? null : route.component}>
+            {childComponents}
+          </Route>
+        );
+      })}
+    </Switch>
   );
 }

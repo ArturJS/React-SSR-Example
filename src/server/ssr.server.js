@@ -1,12 +1,12 @@
 import React from 'react';
-import {renderToString} from 'react-router-server';
 import {StaticRouter} from 'react-router';
-import {inspect} from 'import-inspector';
+import Loadable from 'react-loadable';
+import ReactDOMServer from 'react-dom/server';
+
 import Html from '../client/helpers/Html';
 import App from '../client/components/App';
 import {matchRoutes} from 'react-router-config';
 import routes from './../routes';
-import {JSDOM} from 'jsdom';
 import _ from 'lodash';
 
 export const initSSRServer = (app) => {
@@ -14,7 +14,7 @@ export const initSSRServer = (app) => {
     const branch = matchRoutes(routes, req.url);
     const lastMatchedRoute = _.last(branch);
 
-    if (__SERVER__ && lastMatchedRoute.redirectTo) {
+    if (__SERVER__ && lastMatchedRoute.redirectTo) { // do we need __SERVER__ ?
       _redirectTo(res, lastMatchedRoute.redirectTo);
       return false;
     }
@@ -45,37 +45,30 @@ export const initSSRServer = (app) => {
   });
 };
 
-// todo: use https://github.com/audreyt/node-webworker-threads
+
 export async function renderPage(url, pageComponent, serverData) {
   const context = {};
-  let lazyImports = [];
-
-  _resetGlobalChartsRenderQueue();
-
-  // setup a watcher
-  let stopInspecting = inspect(metadata => { // necessary for react-loadable components
-    lazyImports.push(metadata);
-  });
+  let lazyModules = [];
 
   try {
-    let {html} = await renderToString(
+    let html = ReactDOMServer.renderToString(
       <Html
         assets={webpackIsomorphicTools.assets()}
         initialPageProps={serverData}
         component={
           __DISABLE_SSR__ ? null :
             <StaticRouter context={context} location={url}>
-              <App>
-                {pageComponent}
-              </App>
+              <Loadable.Capture report={moduleName => lazyModules.push(moduleName)}>
+                <App>
+                  {pageComponent}
+                </App>
+              </Loadable.Capture>
             </StaticRouter>
         }
       />
     );
 
-    stopInspecting(); // necessary for react-loadable components
-    html = _addLazyModules(html, url, lazyImports);
-    html = await _renderCharts(html);
+    html = _addLazyModules(html, lazyModules);
 
     return `<!doctype html>${html}`;
   }
@@ -93,35 +86,17 @@ export function getPageComponentFromMatchedRoutes(branch, serverData) {
 
 // private methods
 
-const lazyModulesCache = {};
-
-function _resetGlobalChartsRenderQueue() {
-  global.chartsRenderQueue = {
-    barChartQueue: []
-  };
-}
-
-function _addLazyModules(html, requestUrl, lazyImports) {
-  if (
-    lazyImports.length === 0 && !lazyModulesCache[requestUrl] // necessary due to "lazyImports" generates only on first invocation ("renderToString" uses cache internally)
-  ) return html;
-
-  if (lazyImports.length > 0) {
-    lazyModulesCache[requestUrl] = lazyImports;
-  }
-
-  lazyImports = lazyModulesCache[requestUrl];
-
-  const lazyScripts = lazyImports.map(lazyImport => {
-    const lazyChunkPath = _getChunkPath(lazyImport.serverSideRequirePath);
+function _addLazyModules(html, lazyImports) {
+  const lazyScripts = lazyImports.map(modulePath => {
+    const lazyChunkPath = _getChunkPath(modulePath);
     return `<script src="${lazyChunkPath}" charset="UTF-8"></script>`;
   });
 
   return html.replace('</head>', lazyScripts + '</head>');
 }
 
-function _getChunkPath(serverSideRequirePath) {
-  const moduleName = serverSideRequirePath.substr(serverSideRequirePath.lastIndexOf('\\') + 1);
+function _getChunkPath(modulePath) {
+  const moduleName = modulePath.substr(modulePath.lastIndexOf('/') + 1);
   return webpackIsomorphicTools.assets().javascript[moduleName];
 }
 
@@ -130,21 +105,4 @@ function _redirectTo(res, redirectUrl) {
     Location: redirectUrl
   });
   res.end();
-}
-
-function _renderCharts(html) {
-  return new Promise((res, rej) => {
-    const {barChartQueue} = global.chartsRenderQueue;
-    if (barChartQueue.length === 0) {
-      res(html);
-      return;
-    }
-
-    let {window} = new JSDOM(html);
-    global.d3 = window.d3;
-    global.document = window.document;
-    barChartQueue.forEach((renderChartFn) => renderChartFn());
-
-    res(window.document.documentElement.outerHTML);
-  });
 }

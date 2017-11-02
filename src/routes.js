@@ -1,8 +1,6 @@
 import React from 'react';
 import {Redirect} from 'react-router';
 import Loadable from 'react-loadable';
-import {report} from 'import-inspector';
-import path from 'path';
 
 import HomePage from './client/components/pages/HomePage';
 import NotFoundPage from './client/components/pages/NotFoundPage';
@@ -30,28 +28,20 @@ const routes = [
     path: '/about',
     exact: true,
     component: Loadable({
-      loader: () => report(
-        System.import(/* webpackChunkName: 'AboutPage' */'./client/components/pages/AboutPage/AboutPage'),
-        {
-          serverSideRequirePath: path.resolve(__dirname, './client/components/pages/AboutPage/AboutPage'),
-          webpackRequireWeakId: () => require.resolveWeak('./client/components/pages/AboutPage/AboutPage')
-        }
-      ),
-      loading: <div>Loading...</div>
+      loader: () => System.import(/* webpackChunkName: 'AboutPage' */'./client/components/pages/AboutPage/AboutPage'),
+      modules: ['./client/components/pages/AboutPage/AboutPage'],
+      webpack: () => [require.resolveWeak('./client/components/pages/AboutPage/AboutPage')],
+      loading: () => <div>Loading...</div>
     })
   },
   {
     path: '/charts',
     exact: true,
     component: Loadable({
-      loader: () => report(
-        System.import(/* webpackChunkName: 'ChartsPage' */'./client/components/pages/ChartsPage/ChartsPage'),
-        {
-          serverSideRequirePath: path.resolve(__dirname, './client/components/pages/ChartsPage/ChartsPage'),
-          webpackRequireWeakId: () => require.resolveWeak('./client/components/pages/ChartsPage/ChartsPage')
-        }
-      ),
-      loading: <div>Loading...</div>
+      loader: () => System.import(/* webpackChunkName: 'ChartsPage' */'./client/components/pages/ChartsPage/ChartsPage'),
+      modules: ['./client/components/pages/ChartsPage/ChartsPage'],
+      webpack: () => [require.resolveWeak('./client/components/pages/ChartsPage/ChartsPage')],
+      loading: () => <div>Loading...</div>
     })
   },
   {

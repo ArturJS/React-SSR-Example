@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom/server';
+import ReactDOMServer from 'react-dom/server';
 import serialize from 'serialize-javascript';
 import Helmet from 'react-helmet';
 
@@ -22,7 +22,7 @@ export default class Html extends Component {
 
   render() {
     const {assets, component, initialPageProps} = this.props;
-    const content = component ? ReactDOM.renderToString(component) : '';
+    const content = component ? ReactDOMServer.renderToString(component) : '';
     const head = Helmet.rewind();
 
     return (

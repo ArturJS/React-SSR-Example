@@ -4,6 +4,7 @@ import Loadable from 'react-loadable';
 import ReactDOMServer from 'react-dom/server';
 import {matchRoutes} from 'react-router-config';
 import _ from 'lodash';
+import {JSDOM} from 'jsdom';
 
 import HtmlChunksTransformStream from './helpers/HtmlChunksTransformStream';
 import Html from '../client/helpers/Html';
@@ -54,9 +55,13 @@ export async function renderPage(url, pageComponent, serverData) {
     lazyModules
   } = _getPageMarkupAndLazyModules({url, pageComponent, serverData});
 
+  _resetChartsRenderQueue();
+
   try {
     let html = ReactDOMServer.renderToString(pageMarkup);
     html = _addLazyModules(html, lazyModules);
+    html = _renderCharts(html);
+
     return `<!doctype html>${html}`;
   }
   catch (err) {
@@ -83,6 +88,8 @@ function _renderToNodeStreamPage({req, res, pageComponent, serverData}) {
 
   const renderStream = ReactDOMServer.renderToNodeStream(pageMarkup);
 
+  _resetChartsRenderQueue();
+
   res.write('<!doctype html>');
 
   const htmlChunksTransformStream = new HtmlChunksTransformStream({
@@ -92,7 +99,9 @@ function _renderToNodeStreamPage({req, res, pageComponent, serverData}) {
           htmlChunk = _addLazyModules(htmlChunk, lazyModules);
         }
         return htmlChunk;
-      }
+      },
+
+      _renderCharts
     ]
   });
 
@@ -152,3 +161,32 @@ function _redirectTo(res, redirectUrl) {
   });
   res.end();
 }
+
+function _resetChartsRenderQueue() {
+  global.chartsRenderQueue = {
+    barChartQueue: {}
+  };
+}
+
+function _renderCharts(html) {
+  const {barChartQueue} = global.chartsRenderQueue;
+  if (Object.keys(barChartQueue).length === 0) {
+    return html;
+  }
+
+  for (const [id, renderChart] of Object.entries(barChartQueue)) {
+    const chartTagRegexp = new RegExp(`<svg [^>]*id="${id}"[^>]*>[^<]*<\/svg>`);
+    const [relatedChartTag] = chartTagRegexp.exec(html) || [''];
+    const {window} = new JSDOM(relatedChartTag);
+
+    renderChart(window);
+    const renderedChart = window.document.body.innerHTML;
+    
+    html = html.replace(relatedChartTag, renderedChart);
+  }
+
+  _resetChartsRenderQueue();
+
+  return html;
+}
+

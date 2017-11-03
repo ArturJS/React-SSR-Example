@@ -4,11 +4,12 @@ import Loadable from 'react-loadable';
 import ReactDOMServer from 'react-dom/server';
 import {matchRoutes} from 'react-router-config';
 import _ from 'lodash';
-import {Transform} from 'stream';
 
+import HtmlChunksTransformStream from './helpers/HtmlChunksTransformStream';
 import Html from '../client/helpers/Html';
 import App from '../client/components/App';
 import routes from './../routes';
+
 
 export const initSSRServer = async(app) => {
   await Loadable.preloadAll(); // necessary to resolve paths to lazy imports on server side
@@ -17,7 +18,7 @@ export const initSSRServer = async(app) => {
     const branch = matchRoutes(routes, req.url);
     const lastMatchedRoute = _.last(branch);
 
-    if (__SERVER__ && lastMatchedRoute.redirectTo) { // do we need __SERVER__ ?
+    if (lastMatchedRoute.redirectTo) {
       _redirectTo(res, lastMatchedRoute.redirectTo);
       return false;
     }
@@ -42,16 +43,73 @@ export const initSSRServer = async(app) => {
       webpackIsomorphicTools.refresh();
     }
 
-    renderToNodeStreamPage({req, res, pageComponent, serverData});
+    _renderToNodeStreamPage({req, res, pageComponent, serverData});
   });
 };
 
-function renderToNodeStreamPage({req, res, pageComponent, serverData}) {
+
+export async function renderPage(url, pageComponent, serverData) {
+  const {
+    pageMarkup,
+    lazyModules
+  } = _getPageMarkupAndLazyModules({url, pageComponent, serverData});
+
+  try {
+    let html = ReactDOMServer.renderToString(pageMarkup);
+    html = _addLazyModules(html, lazyModules);
+    return `<!doctype html>${html}`;
+  }
+  catch (err) {
+    console.error(err);
+  }
+}
+
+
+export function getPageComponentFromMatchedRoutes(branch, serverData) {
+  return _.reduceRight(branch, (componentPyramid, {route}) => (
+    React.createElement(route.component, {children: componentPyramid, serverData})
+  ), null); // collect components from the inside out of matched routes; (necessary for nested routes)
+}
+
+
+// private methods
+
+function _renderToNodeStreamPage({req, res, pageComponent, serverData}) {
+  const {url} = req;
+  const {
+    pageMarkup,
+    lazyModules
+  } = _getPageMarkupAndLazyModules({url, pageComponent, serverData});
+
+  const renderStream = ReactDOMServer.renderToNodeStream(pageMarkup);
+
+  res.write('<!doctype html>');
+
+  const htmlChunksTransformStream = new HtmlChunksTransformStream({
+    transformers: [
+      (htmlChunk) => {
+        if (htmlChunk.indexOf('</body>') > -1) {
+          htmlChunk = _addLazyModules(htmlChunk, lazyModules);
+        }
+        return htmlChunk;
+      }
+    ]
+  });
+
+  renderStream
+    .pipe(htmlChunksTransformStream)
+    .pipe(res, {end: false});
+
+  renderStream.on('end', () => {
+    res.end();
+  });
+}
+
+function _getPageMarkupAndLazyModules({url, pageComponent, serverData}) {
   const context = {};
   const lazyModules = [];
-  const {url} = req;
 
-  const renderStream = ReactDOMServer.renderToNodeStream(
+  const pageMarkup = (
     <Html
       assets={webpackIsomorphicTools.assets()}
       initialPageProps={serverData}
@@ -68,72 +126,11 @@ function renderToNodeStreamPage({req, res, pageComponent, serverData}) {
     />
   );
 
-  res.write('<!doctype html>');
-
-  const htmlChunksTransformStream = new HtmlChunksTransformStream({
-    transformers: [
-      (htmlChunk) => {
-        if (htmlChunk.indexOf('</body>') > -1) {
-          console.log('before htmlChunk ', htmlChunk);
-          console.log('lazyModules', lazyModules);
-          htmlChunk = _addLazyModules(htmlChunk, lazyModules);
-          console.log('after htmlChunk ', htmlChunk);
-        }
-        return htmlChunk;
-      }
-    ]
-  });
-
-  renderStream
-    .pipe(htmlChunksTransformStream)
-    .pipe(res, {end: false});
-
-  renderStream.on('end', () => {
-    res.end();
-  });
+  return {
+    pageMarkup,
+    lazyModules
+  };
 }
-
-
-export async function renderPage(url, pageComponent, serverData) {
-  const context = {};
-  let lazyModules = [];
-
-  try {
-    let html = ReactDOMServer.renderToString(
-      <Html
-        assets={webpackIsomorphicTools.assets()}
-        initialPageProps={serverData}
-        component={
-          __DISABLE_SSR__ ? null :
-            <StaticRouter context={context} location={url}>
-              <Loadable.Capture report={moduleName => lazyModules.push(moduleName)}>
-                <App>
-                  {pageComponent}
-                </App>
-              </Loadable.Capture>
-            </StaticRouter>
-        }
-      />
-    );
-
-    html = _addLazyModules(html, lazyModules);
-
-    return `<!doctype html>${html}`;
-  }
-  catch (err) {
-    console.error(err);
-  }
-}
-
-
-export function getPageComponentFromMatchedRoutes(branch, serverData) {
-  return _.reduceRight(branch, (componentPyramid, {route}) => (
-    React.createElement(route.component, {children: componentPyramid, serverData})
-  ), null); // collect components from the inside out of matched routes;
-}
-
-
-// private methods
 
 function _addLazyModules(html, lazyImports) {
   const lazyScripts = lazyImports.map(modulePath => {
@@ -154,27 +151,4 @@ function _redirectTo(res, redirectUrl) {
     Location: redirectUrl
   });
   res.end();
-}
-
-class HtmlChunksTransformStream extends Transform {
-  constructor({transformers}) {
-    super();
-    this.transformers = transformers;
-  }
-
-  _transform(chunk, encoding, callback) {
-    const htmlChunk = chunk.toString('utf8');
-
-    const transformedHtmlChunk = this.transformers.reduce(
-      (htmlBuffer, transformer) => transformer(htmlBuffer),
-      htmlChunk
-    );
-
-    if (transformedHtmlChunk !== htmlChunk) {
-      chunk = Buffer.from(transformedHtmlChunk, 'utf8');
-    }
-
-    this.push(chunk);
-    callback();
-  };
 }

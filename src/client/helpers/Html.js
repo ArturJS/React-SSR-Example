@@ -38,7 +38,7 @@ export default class Html extends Component {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta charSet="utf-8"/>
           {Object.values(assets.javascript).map((assetPath) =>
-            <link href={assetPath} rel="preload" as="script" charSet="UTF-8"/>
+            <link crossOrigin="anonymous" href={assetPath} rel="preload" as="script" charSet="UTF-8"/>
           )}
           {/* styles (will be present only in production with webpack extract text plugin) */}
           {Object.keys(assets.styles).map((style, key) =>
@@ -50,19 +50,20 @@ export default class Html extends Component {
           {/* outputs a <style/> tag with all bootstrap styles + App.scss + it could be CurrentPage.scss. */}
           {/* can smoothen the initial style flash (flicker) on page load in development mode. */}
           {/* ideally one could also include here the style for the current page (Home.scss, About.scss, etc) */}
-          <script src={assets.javascript.manifest} charSet="UTF-8"/>
-          <script src={assets.javascript.preboot} charSet="UTF-8"/>
-          <script src={assets.javascript.prebootInit} charSet="UTF-8"/>
+          <script crossOrigin="anonymous" src={assets.javascript.manifest} charSet="UTF-8"/>
+          <script crossOrigin="anonymous" src={assets.javascript.preboot} charSet="UTF-8"/>
+          <script crossOrigin="anonymous" src={assets.javascript.prebootInit} charSet="UTF-8"/>
         </head>
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: content}}/>
           {initialPageProps &&
             <script
+              crossOrigin="anonymous"
               dangerouslySetInnerHTML={{__html: `window.__INITIAL_PAGE_PROPS__=${serialize(initialPageProps)};`}}
               charSet="UTF-8"/>
           }
-          <script src={assets.javascript.vendor} charSet="UTF-8"/>
-          <script src={assets.javascript.main} charSet="UTF-8"/>
+          <script crossOrigin="anonymous" src={assets.javascript.vendor} charSet="UTF-8"/>
+          <script crossOrigin="anonymous" src={assets.javascript.main} charSet="UTF-8"/>
         </body>
       </html>
     );

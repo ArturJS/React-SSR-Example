@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
+import _ from 'lodash';
 
 import serverSidePropsWrapper from '../../../helpers/serverSidePropsWrapper';
 import config from '../../../../config';
@@ -44,15 +45,13 @@ export default class Home extends Component {
 
           <h2>{config.app.description}</h2>
         </div>
-        <p>
+        <div className="container">
           <ErrorDemo />
-        </p>
+        </div>
         <div className="buttons-group">
-          <Counter />
-          <Counter />
-          <Counter />
-          <Counter />
-          <Counter />
+          {_.times(10000, (i) => (
+            <Counter key={i} />
+          ))}
         </div>
         <ul className="packages-list">
           {serverData.map(item => (

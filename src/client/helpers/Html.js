@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import ReactDOMServer from 'react-dom/server';
 import serialize from 'serialize-javascript';
 import Helmet from 'react-helmet';
 
@@ -22,8 +21,10 @@ export default class Html extends Component {
 
   render() {
     const {assets, component, initialPageProps} = this.props;
-    const content = component ? ReactDOMServer.renderToString(component) : '';
     const head = Helmet.rewind();
+    const mainScripts = Object.values(assets.javascript)
+      .reverse()
+      .filter(assetPath => assetPath.indexOf('chunk') === -1);
 
     return (
       <html lang="en-us">
@@ -37,7 +38,7 @@ export default class Html extends Component {
           <link rel="shortcut icon" href="/favicon.ico" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta charSet="utf-8"/>
-          {Object.values(assets.javascript).map((assetPath) =>
+          {mainScripts.map((assetPath) =>
             <link crossOrigin="anonymous" href={assetPath} rel="preload" as="script" charSet="UTF-8"/>
           )}
           {/* styles (will be present only in production with webpack extract text plugin) */}
@@ -55,7 +56,9 @@ export default class Html extends Component {
           <script crossOrigin="anonymous" src={assets.javascript.prebootInit} charSet="UTF-8"/>
         </head>
         <body>
-          <div id="content" dangerouslySetInnerHTML={{__html: content}}/>
+          <div id="content">
+            {component}
+          </div>
           {initialPageProps &&
             <script
               crossOrigin="anonymous"

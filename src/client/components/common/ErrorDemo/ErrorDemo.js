@@ -17,7 +17,6 @@ export default class ErrorDemo extends Component {
 
   render() {
     if (this.state.hasError) {
-      // throw new Error('This is a horrible error message!!!!111');
       const data = {};
       console.log(data.data.data);
     }
@@ -30,7 +29,6 @@ export default class ErrorDemo extends Component {
           onClick={this.throwError}>
           Throw an error
         </button>
-        Some useful info here...
       </div>
     );
   }

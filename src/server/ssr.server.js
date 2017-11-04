@@ -110,7 +110,9 @@ function _renderToNodeStreamPage({req, res, pageComponent, serverData}) {
     .pipe(res, {end: false});
 
   renderStream.on('end', () => {
-    res.end();
+    setImmediate(() => { // necessary to avoid "Error: write after end" in case of huge number of htmlChunks
+      res.end();
+    });
   });
 }
 
@@ -170,6 +172,7 @@ function _resetChartsRenderQueue() {
 
 function _renderCharts(html) {
   const {barChartQueue} = global.chartsRenderQueue;
+
   if (Object.keys(barChartQueue).length === 0) {
     return html;
   }
@@ -181,7 +184,7 @@ function _renderCharts(html) {
 
     renderChart(window);
     const renderedChart = window.document.body.innerHTML;
-    
+
     html = html.replace(relatedChartTag, renderedChart);
   }
 

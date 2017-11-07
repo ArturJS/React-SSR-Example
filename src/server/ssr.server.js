@@ -110,7 +110,7 @@ function _renderToNodeStreamPage({req, res, pageComponent, serverData}) {
     .pipe(res, {end: false});
 
   renderStream.on('end', () => {
-    setImmediate(() => { // necessary to avoid "Error: write after end" in case of huge number of htmlChunks
+    setImmediate(() => { // it's necessary to avoid "Error: write after end" in case of huge number of htmlChunks
       res.end();
     });
   });

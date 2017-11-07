@@ -16,6 +16,7 @@ var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
 
 var SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+var {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const config = require('../src/config');
 // sw-precache-webpack-plugin configurations
 
@@ -137,6 +138,8 @@ module.exports = {
     //CommonChunksPlugin will now extract all the common modules from vendor and main bundles
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest' //But since there are no more common modules between them we end up with just the runtime code included in the manifest file
-    })
+    }),
+
+    new BundleAnalyzerPlugin()
   ]
 };

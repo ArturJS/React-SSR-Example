@@ -49,7 +49,7 @@ export default class Home extends Component {
           <ErrorDemo />
         </div>
         <div className="buttons-group">
-          {_.times(10000, (i) => (
+          {_.times(1000, (i) => (
             <Counter key={i} />
           ))}
         </div>

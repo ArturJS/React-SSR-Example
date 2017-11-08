@@ -3,7 +3,6 @@ import http from 'http';
 import config from './config';
 
 import {initStaticServer} from './server/static.server';
-import {initProxyServer} from './server/proxy.server';
 import {initSSRServer} from './server/ssr.server';
 import {initWebpackDevServer} from './server/webpack-dev.server';
 
@@ -11,7 +10,6 @@ const app = new Express();
 const server = new http.Server(app);
 
 initStaticServer(app); // here better use nginx
-initProxyServer(app, server);
 initSSRServer(app);
 
 if (__DEVELOPMENT__) {

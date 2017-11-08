@@ -29,8 +29,6 @@ const routes = [
     exact: true,
     component: Loadable({
       loader: () => System.import(/* webpackChunkName: 'AboutPage' */'./client/components/pages/AboutPage/AboutPage'),
-      modules: ['./client/components/pages/AboutPage/AboutPage'],
-      webpack: () => [require.resolveWeak('./client/components/pages/AboutPage/AboutPage')],
       loading: () => 'Loading...'
     })
   },
@@ -39,8 +37,6 @@ const routes = [
     exact: true,
     component: Loadable({
       loader: () => System.import(/* webpackChunkName: 'ChartsPage' */'./client/components/pages/ChartsPage/ChartsPage'),
-      modules: ['./client/components/pages/ChartsPage/ChartsPage'],
-      webpack: () => [require.resolveWeak('./client/components/pages/ChartsPage/ChartsPage')],
       loading: () => 'Loading...'
     })
   },

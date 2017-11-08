@@ -1,19 +1,17 @@
-require('babel-polyfill');
-
 // Webpack config for development
-var fs = require('fs');
-var path = require('path');
-var webpack = require('webpack');
-var assetsPath = path.resolve(__dirname, '../static/dist');
-var host = (process.env.HOST || 'localhost');
-var port = +process.env.PORT || 3000;
+const fs = require('fs');
+const path = require('path');
+const webpack = require('webpack');
+const assetsPath = path.resolve(__dirname, '../static/dist');
+const host = (process.env.HOST || 'localhost');
+const port = +process.env.PORT || 3000;
 
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
-var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
-var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
+const WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
+const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
 
-var babelrc = fs.readFileSync('./.babelrc');
-var babelrcObject = {};
+const babelrc = fs.readFileSync('./.babelrc');
+let babelrcObject = {};
 
 try {
   babelrcObject = JSON.parse(babelrc);

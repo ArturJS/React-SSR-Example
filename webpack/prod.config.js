@@ -1,23 +1,21 @@
-require('babel-polyfill');
-
 // Webpack config for creating the production bundle.
-var path = require('path');
-var webpack = require('webpack');
-var CleanPlugin = require('clean-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var WebpackChunkHash = require('webpack-chunk-hash');
-var strip = require('strip-loader');
+const path = require('path');
+const webpack = require('webpack');
+const CleanPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const WebpackChunkHash = require('webpack-chunk-hash');
+const strip = require('strip-loader');
 
-var projectRootPath = path.resolve(__dirname, '../');
-var assetsPath = path.resolve(projectRootPath, './static');
+const projectRootPath = path.resolve(__dirname, '../');
+const assetsPath = path.resolve(projectRootPath, './static');
 
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
-var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
-var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
+const WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
+const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
 
-var SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
-var {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
-const config = require('../src/config');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+
 // sw-precache-webpack-plugin configurations
 
 const SW_PRECACHE_CONFIG = {
@@ -140,6 +138,8 @@ module.exports = {
       name: 'manifest' //But since there are no more common modules between them we end up with just the runtime code included in the manifest file
     }),
 
-    new BundleAnalyzerPlugin()
+    new BundleAnalyzerPlugin(),
+
+    new webpack.optimize.ModuleConcatenationPlugin()
   ]
 };

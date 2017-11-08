@@ -7,8 +7,11 @@
 
   "plugins": [
     "lodash",
-    "react-loadable/babel",
     "syntax-dynamic-import",
+    ["import-inspector", {
+      "serverSideRequirePath": true,
+      "webpackRequireWeakId": true
+    }],
     "babel-plugin-dynamic-import-node",
     "transform-runtime",
     "add-module-exports",

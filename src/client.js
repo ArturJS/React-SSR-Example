@@ -11,7 +11,6 @@ import Loadable from 'react-loadable';
 
 import rootRoutes from './routes';
 import App from './client/components/App';
-import './client/helpers/register-service-worker';
 
 
 const Client = (

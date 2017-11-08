@@ -95,7 +95,7 @@
       }
     },
     "build": {
-      "command": "webpack --verbose --colors --display-error-details --config webpack/prod.config.js",
+      "command": "webpack --display-error-details --config webpack/prod.config.js",
       "env": {
         "NODE_ENV": "production"
       }
@@ -200,6 +200,6 @@
     "webpack-hot-middleware": "^2.5.0"
   },
   "engines": {
-    "node": "7.5.0"
+    "node": "8.6.0"
   }
 }

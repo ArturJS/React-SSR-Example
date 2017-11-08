@@ -13,24 +13,8 @@ const assetsPath = path.resolve(projectRootPath, './static');
 const WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
 
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
-// sw-precache-webpack-plugin configurations
-
-const SW_PRECACHE_CONFIG = {
-  filename: 'service-worker.js',
-  staticFileGlobs: [
-    'static/**/*.{js,html,css,png,jpg,gif,svg,eot,ttf,woff,woff2}'
-  ],
-  stripPrefix: 'static',
-  runtimeCaching: [{
-    urlPattern: /\//,
-    handler: 'networkFirst'
-  }],
-  minify: true,
-  verbose: true
-};
 
 module.exports = {
   context: path.resolve(__dirname, '..'),
@@ -101,8 +85,6 @@ module.exports = {
 
     // ignore dev config
     new webpack.IgnorePlugin(/\.\/dev/, /\/config$/),
-
-    new SWPrecacheWebpackPlugin(SW_PRECACHE_CONFIG),
 
     // optimizations
     new webpack.optimize.UglifyJsPlugin({

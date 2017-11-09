@@ -15,6 +15,10 @@ const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('.
 
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
+const AdditionalAssetsWebpackPlugin = require('./utils/AdditionalAssetsWebpackPlugin');
+const {getInlineCode} = require('preboot');
+const prebootConfig = require('./utils/preboot.config');
+
 
 module.exports = {
   context: path.resolve(__dirname, '..'),
@@ -22,7 +26,6 @@ module.exports = {
     main: [
       './src/client.js'
     ],
-    prebootInit: './src/client/prebootInit.js'
   },
   output: {
     path: assetsPath,
@@ -120,8 +123,22 @@ module.exports = {
       name: 'manifest' //But since there are no more common modules between them we end up with just the runtime code included in the manifest file
     }),
 
-    new BundleAnalyzerPlugin(),
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: 'webpack-bundle-report.html'
+    }),
 
-    new webpack.optimize.ModuleConcatenationPlugin()
+    new webpack.optimize.ModuleConcatenationPlugin(),
+
+    new AdditionalAssetsWebpackPlugin({
+      assets: [
+        {
+          name: 'prebootInit',
+          filename: 'prebootInit-[hash].js',
+          sourceCode: `/* eslint-disable */${getInlineCode(prebootConfig)}/* eslint-enable */`,
+          uglifyJs: true
+        }
+      ]
+    }),
   ]
 };

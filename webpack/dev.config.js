@@ -3,12 +3,17 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const assetsPath = path.resolve(__dirname, '../static/dist');
-const host = (process.env.HOST || 'localhost');
+const host = process.env.HOST || 'localhost';
 const port = +process.env.PORT || 3000;
 
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 const WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
+
+const AdditionalAssetsWebpackPlugin = require('./utils/AdditionalAssetsWebpackPlugin');
+const {getInlineCode} = require('preboot');
+const prebootConfig = require('./utils/preboot.config');
+
 
 const babelrc = fs.readFileSync('./.babelrc');
 let babelrcObject = {};
@@ -29,7 +34,6 @@ module.exports = {
       'webpack-hot-middleware/client?path=http://' + host + ':' + port + '/__webpack_hmr',
       './src/client.js'
     ],
-    prebootInit: './src/client/prebootInit.js'
   },
   output: {
     path: assetsPath,
@@ -49,7 +53,7 @@ module.exports = {
       },
       {
         test: /\.jsx?$/,
-        exclude: /node_modules|prebootInit/,
+        exclude: /node_modules/,
         use: [
           {
             loader: 'react-hot-loader/webpack'
@@ -101,19 +105,27 @@ module.exports = {
           module.context.indexOf('node_modules') !== -1;
       }
     }),
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: 'prebootInit',
-    //   filename: '[name].js'
-    // }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'preboot',
       minChunks: function (module) {
-        return module.context && /preboot(?!(Init))/.test(module.context); // add 'preboot' and NOT 'prebootInit'
+        return module.context && /preboot/.test(module.context);
       }
     }),
+
+    new AdditionalAssetsWebpackPlugin({
+      assets: [
+        {
+          name: 'prebootInit',
+          filename: 'prebootInit.js',
+          sourceCode: `/* eslint-disable */${getInlineCode(prebootConfig)}/* eslint-enable */`,
+          uglifyJs: false
+        }
+      ]
+    }),
+
     //CommonChunksPlugin will now extract all the common modules from vendor and main bundles
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest' //But since there are no more common modules between them we end up with just the runtime code included in the manifest file
-    })
+    }),
   ]
 };

@@ -23,20 +23,14 @@
   ],
   "main": "bin/server.js",
   "scripts": {
-    "start": "concurrent --kill-others \"npm run start-prod\" \"npm run start-prod-api\"",
-    "start-prod": "better-npm-run start-prod",
-    "start-prod-api": "better-npm-run start-prod-api",
+    "start": "better-npm-run start-prod",
     "build": "better-npm-run build",
-    "static-build": "npm run build && node ./bin/static-export.js",
+    "static-export": "npm run build && node ./bin/static-export.js",
     "postinstall": "npm run build",
     "lint": "eslint -c .eslintrc src api",
-    "start-dev": "better-npm-run start-dev",
-    "start-dev-api": "better-npm-run start-dev-api",
-    "dev": "npm run start-dev",
+    "dev": "better-npm-run start-dev",
     "test": "jest --env=jsdom",
-    "test:coverage": "jest --env=jsdom --coverage",
-    "test-node": "./node_modules/mocha/bin/mocha $(find api -name '*-test.js') --compilers js:babel-core/register",
-    "test-node-watch": "./node_modules/mocha/bin/mocha $(find api -name '*-test.js') --compilers js:babel-core/register --watch"
+    "test:coverage": "jest --env=jsdom --coverage"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -112,9 +106,9 @@
     "babel-plugin-transform-react-display-name": "^6.3.13",
     "babel-plugin-transform-runtime": "^6.3.13",
     "babel-polyfill": "^6.3.14",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-react": "^6.3.13",
-    "babel-preset-stage-0": "^6.3.13",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.3.13",
     "babel-runtime": "^6.3.19",
     "body-parser": "^1.14.1",

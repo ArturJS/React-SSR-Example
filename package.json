@@ -142,6 +142,7 @@
     "webpack-isomorphic-tools": "^2.2.18"
   },
   "devDependencies": {
+    "additional-assets-webpack-plugin": "0.1.1",
     "autoprefixer": "7.1.1",
     "babel-eslint": "7.2.2",
     "babel-plugin-lodash": "3.2.11",

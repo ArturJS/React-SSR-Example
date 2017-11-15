@@ -10,7 +10,7 @@ const port = +process.env.PORT || 3000;
 const WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
 
-const AdditionalAssetsWebpackPlugin = require('./utils/AdditionalAssetsWebpackPlugin');
+const AdditionalAssetsWebpackPlugin = require('additional-assets-webpack-plugin');
 const {getInlineCode} = require('preboot');
 const prebootConfig = require('./utils/preboot.config');
 

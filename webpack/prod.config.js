@@ -15,7 +15,7 @@ const webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('.
 
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
-const AdditionalAssetsWebpackPlugin = require('./utils/AdditionalAssetsWebpackPlugin');
+const AdditionalAssetsWebpackPlugin = require('additional-assets-webpack-plugin');
 const {getInlineCode} = require('preboot');
 const prebootConfig = require('./utils/preboot.config');
 

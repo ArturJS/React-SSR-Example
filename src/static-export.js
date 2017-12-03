@@ -2,6 +2,8 @@ import shell from 'shelljs';
 import path from 'path';
 import chalk from 'chalk';
 import {matchRoutes} from 'react-router-config';
+import sanitizeFilename from 'sanitize-filename';
+
 import routes from '../src/routes';
 import {
   renderPage,
@@ -70,6 +72,7 @@ function _createFoldersAndHtmlByUrl(url, html) {
     fileName = 'index';
   }
   fileName += '.html';
+  fileName = sanitizeFilename(fileName);
 
   if (filePath !== '/') {
     filePath = path.resolve(PATH_TO_TARGET_FOLDER, filePath);

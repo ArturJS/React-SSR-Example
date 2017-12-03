@@ -61,6 +61,13 @@ export default class App extends Component {
               </div>
             </div>
             <NavLink
+              to="/params/123"
+              className="nav-link"
+              activeClassName="selected"
+              tabIndex="0">
+              Params
+            </NavLink>
+            <NavLink
               to="/about"
               className="nav-link"
               activeClassName="selected"

@@ -61,6 +61,16 @@ const routes = [
     ]
   },
   {
+    path: '/params/:id',
+    exact: true,
+    component: Loadable({
+      loader: () => System.import(/* webpackChunkName: 'ParamsPage' */'./client/components/pages/ParamsPage/ParamsPage'),
+      modules: ['./client/components/pages/ParamsPage/ParamsPage'],
+      webpack: () => [require.resolveWeak('./client/components/pages/ParamsPage/ParamsPage')],
+      loading: () => 'Loading...'
+    })
+  },
+  {
     path: '/404',
     exact: true,
     component: NotFoundPage

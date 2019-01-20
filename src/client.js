@@ -1,72 +1,19 @@
-/**
- * THIS IS THE ENTRY POINT FOR THE CLIENT, JUST LIKE server.js IS THE ENTRY POINT FOR THE SERVER.
- */
-import 'babel-polyfill';
-import 'preboot';
 import React from 'react';
-import {Switch, Route} from 'react-router';
-import {hydrate} from 'react-dom';
-import {BrowserRouter} from 'react-router-dom';
-import Loadable from 'react-loadable';
+import { hydrate } from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { ensureReady, After } from '@jaredpalmer/after';
+import './client.css';
+import routes from './routes';
 
-import rootRoutes from './routes';
-import App from './client/components/App';
-
-
-const Client = (
-  <App>
-    {_renderRoutes(rootRoutes)}
-  </App>
+ensureReady(routes).then(data =>
+  hydrate(
+    <BrowserRouter>
+      <After data={data} routes={routes} />
+    </BrowserRouter>,
+    document.getElementById('root')
+  )
 );
 
-if (__CLIENT__) {
-  window.addEventListener('load', () => {
-    Loadable
-      .preloadReady()
-      .then(() => {
-        hydrate(
-          <BrowserRouter>
-            {Client}
-          </BrowserRouter>,
-          document.getElementById('content')
-        );
-      });
-  });
-}
-
-export default Client;
-
-
-if (process.env.NODE_ENV !== 'production') {
-  global.React = React; // enable debugger
-}
-
-function _renderRoutes(routes) {
-  if (!routes) return null;
-
-  return (
-    <Switch>
-      {routes.map((route, i) => {
-        let childComponents = _renderRoutes(route.routes);
-
-        if (childComponents) {
-          childComponents = (
-            <route.component>
-              {childComponents}
-            </route.component>
-          );
-        }
-        return (
-          <Route
-            key={route.key || i}
-            path={route.path}
-            exact={route.exact}
-            strict={route.strict}
-            component={childComponents ? null : route.component}>
-            {childComponents}
-          </Route>
-        );
-      })}
-    </Switch>
-  );
+if (module.hot) {
+  module.hot.accept();
 }
